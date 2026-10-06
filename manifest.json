@@ -1,0 +1,25 @@
+{
+  "name": "EMPIRE CODE HUB",
+  "short_name": "EMPIRE CODE",
+  "description": "Scripts Node.js/PHP premium, outils HTML autonomes hors ligne, formations IA et cours d'informatique par EMPIRE CODE HUB.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "fr",
+  "dir": "ltr",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "categories": ["business", "education", "productivity"],
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "donko.png", "sizes": "72x72", "type": "image/png", "purpose": "any" },
+    { "src": "donko.png", "sizes": "96x96", "type": "image/png", "purpose": "any" },
+    { "src": "donko.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "donko.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "donko.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "donko.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "donko.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "donko.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

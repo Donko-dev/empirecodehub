@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EMPIRE CODE HUB — Scripts Node.js premium, outils HTML hors ligne &amp; formations IA</title>
+  <meta name="description" content="EMPIRE CODE HUB : scripts Node.js/PHP sécurisés, utilitaires HTML autonomes hors ligne, formations en intelligence artificielle et cours d'informatique.">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="EMPIRE CODE HUB">
+  <meta property="og:description" content="Scripts Node.js premium, outils HTML autonomes hors ligne, formations IA et cours d'informatique.">
+
+  <!-- Logo unique : favicon, apple-touch-icon, logo du site, icônes PWA -->
+  <link rel="icon" type="image/png" href="donko.png">
+  <link rel="apple-touch-icon" href="donko.png">
+  <link rel="manifest" href="manifest.json">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neon: { cyan: '#00e5ff', blue: '#2f6bff' },
+            panel: '#0d0d10'
+          },
+          boxShadow: {
+            neon: '0 0 32px rgba(0,229,255,.25)'
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    html { scroll-behavior: smooth; background: #000000; }
+    body { background: #000000; color: #e4e4e7; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    [hidden] { display: none !important; }
+    section[id], footer[id] { scroll-margin-top: 5rem; }
+    :focus-visible { outline: 2px solid #22d3ee; outline-offset: 3px; }
+
+    .bg-grid {
+      background-image:
+        linear-gradient(rgba(34,211,238,.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,211,238,.07) 1px, transparent 1px);
+      background-size: 48px 48px;
+      -webkit-mask-image: radial-gradient(ellipse at 50% 20%, #000 25%, transparent 75%);
+      mask-image: radial-gradient(ellipse at 50% 20%, #000 25%, transparent 75%);
+    }
+
+    .term-caret::after { content: "\2588"; margin-left: 2px; color: #22d3ee; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Bouton d'installation : caché par défaut, apparition fluide */
+    .install-nav { display: none; }
+    @media (min-width: 1024px) { .install-nav:not([hidden]) { display: inline-flex; } }
+    .install-anim:not([hidden]) { animation: pop-in .4s ease-out both; }
+    @keyframes pop-in { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
+
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+  <a href="#produits" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-cyan-500 focus:px-4 focus:py-2 focus:text-black">Aller au catalogue</a>
+
+  <noscript>
+    <div class="bg-cyan-500 px-4 py-3 text-center text-sm font-semibold text-black">
+      JavaScript est nécessaire pour afficher le catalogue. Rendez-vous directement sur
+      <a class="underline" href="https://empirecode.mychariow.co/">la boutique EMPIRE CODE</a>.
+    </div>
+  </noscript>
+
+  <!-- ============ NAVBAR ============ -->
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur">
+    <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8" aria-label="Navigation principale">
+      <a href="#accueil" class="flex items-center gap-3">
+        <img src="donko.png" alt="Logo EMPIRE CODE HUB" width="36" height="36" class="h-9 w-9 rounded-lg object-contain">
+        <span class="text-sm font-bold tracking-wide text-white sm:text-base">EMPIRE CODE HUB</span>
+      </a>
+
+      <div class="hidden items-center gap-8 text-sm md:flex">
+        <a href="#accueil" class="text-zinc-300 transition hover:text-cyan-400">Accueil</a>
+        <a href="#produits" class="text-zinc-300 transition hover:text-cyan-400">Produits</a>
+        <a href="#garanties" class="text-zinc-300 transition hover:text-cyan-400">Garanties</a>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="installNavBtn" type="button" hidden
+                class="install-nav install-anim items-center gap-2 rounded-lg border border-cyan-400/40 px-3 py-2 text-sm font-medium text-cyan-300 transition hover:bg-cyan-400/10">
+          <i class="fa-solid fa-download" aria-hidden="true"></i>
+          Installer l'application
+        </button>
+
+        <a href="https://empirecode.mychariow.co/" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 rounded-lg bg-cyan-500 px-3 py-2 text-sm font-semibold text-black shadow-neon transition hover:bg-cyan-400 sm:px-4"
+           aria-label="Boutique Globale">
+          <i class="fa-solid fa-store" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Boutique Globale</span>
+        </a>
+
+        <button id="menuBtn" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Ouvrir le menu"
+                class="grid h-10 w-10 place-items-center rounded-lg border border-white/10 text-zinc-200 md:hidden">
+          <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+      </div>
+    </nav>
+
+    <div id="mobileMenu" hidden class="border-t border-white/10 bg-black md:hidden">
+      <div class="mx-auto flex max-w-7xl flex-col px-4 py-2 text-sm">
+        <a href="#accueil" class="mobile-link rounded-md px-2 py-3 text-zinc-200">Accueil</a>
+        <a href="#produits" class="mobile-link rounded-md px-2 py-3 text-zinc-200">Produits</a>
+        <a href="#garanties" class="mobile-link rounded-md px-2 py-3 text-zinc-200">Garanties</a>
+        <a href="https://empirecode.mychariow.co/" target="_blank" rel="noopener noreferrer" class="rounded-md px-2 py-3 font-semibold text-cyan-400">Boutique Globale</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section id="accueil" class="relative overflow-hidden border-b border-white/10">
+      <div class="bg-grid absolute inset-0" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute -top-40 left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-cyan-500/20 blur-[120px]" aria-hidden="true"></div>
+
+      <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:px-8 lg:py-28">
+        <div class="lg:col-span-7">
+          <h1 class="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Des codes Node.js premium, sécurisés.
+            <span class="mt-2 block text-cyan-400">Des outils autonomes, légers, hors ligne.</span>
+          </h1>
+          <p class="mt-6 max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg">
+            Codes sources audités, utilitaires HTML qui tournent sans connexion, formations en intelligence artificielle et cours d'informatique. Chaque solution est livrée avec sa documentation.
+          </p>
+
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <a href="#produits" class="inline-flex items-center gap-2 rounded-lg bg-cyan-500 px-6 py-3 font-semibold text-black shadow-neon transition hover:bg-cyan-400">
+              <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+              Explorer le catalogue
+            </a>
+            <a href="https://wa.me/2290196809106" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 rounded-lg border border-white/15 px-6 py-3 font-medium text-zinc-200 transition hover:border-cyan-400/60 hover:text-cyan-300">
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+              Poser une question
+            </a>
+          </div>
+
+          <ul class="mt-10 flex flex-wrap gap-2 text-sm text-zinc-300" aria-label="Technologies">
+            <li class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5"><i class="fa-brands fa-node-js text-cyan-400" aria-hidden="true"></i>Node.js</li>
+            <li class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5"><i class="fa-brands fa-php text-cyan-400" aria-hidden="true"></i>PHP</li>
+            <li class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5"><i class="fa-brands fa-html5 text-cyan-400" aria-hidden="true"></i>HTML hors ligne</li>
+            <li class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5"><i class="fa-solid fa-brain text-cyan-400" aria-hidden="true"></i>Formations IA</li>
+          </ul>
+        </div>
+
+        <div class="lg:col-span-5" aria-hidden="true">
+          <div class="overflow-hidden rounded-2xl border border-cyan-400/20 bg-[#050507] shadow-neon">
+            <div class="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+              <span class="h-3 w-3 rounded-full bg-zinc-700"></span>
+              <span class="h-3 w-3 rounded-full bg-zinc-700"></span>
+              <span class="h-3 w-3 rounded-full bg-cyan-500"></span>
+              <span class="ml-3 text-xs text-zinc-500">empire-code-hub — bash</span>
+            </div>
+            <pre id="terminal" class="min-h-[11rem] whitespace-pre-wrap p-5 text-sm leading-7 text-zinc-300" style="font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PRODUITS ============ -->
+    <section id="produits" class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Catalogue</h2>
+          <p class="mt-3 max-w-xl text-zinc-400">Les produits sont lus directement depuis la boutique EMPIRE CODE. Un nouveau produit publié sur Chariow apparaît ici sans aucune mise à jour manuelle.</p>
+        </div>
+        <div class="flex items-center gap-3 text-sm text-zinc-400">
+          <span id="syncDot" class="h-2.5 w-2.5 rounded-full bg-zinc-600" aria-hidden="true"></span>
+          <p id="syncStatus" role="status" aria-live="polite">Synchronisation avec la boutique…</p>
+          <button id="refreshBtn" type="button" aria-label="Actualiser le catalogue"
+                  class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-zinc-300 transition hover:border-cyan-400/50 hover:text-cyan-300">
+            <i id="refreshIcon" class="fa-solid fa-rotate" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="filters" role="group" aria-label="Filtrer les produits par catégorie" class="mt-8 flex flex-wrap gap-2"></div>
+
+      <div id="grid" class="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true"></div>
+    </section>
+
+    <!-- ============ GARANTIES ============ -->
+    <section id="garanties" class="border-y border-white/10 bg-[#050507]">
+      <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Engagement &amp; confiance</h2>
+        <p class="mt-3 max-w-xl text-zinc-400">Ce que vous recevez avec chaque solution EMPIRE CODE.</p>
+
+        <div class="mt-10 grid divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10 bg-panel md:grid-cols-3 md:divide-x md:divide-y-0">
+          <div class="p-8">
+            <div class="grid h-12 w-12 place-items-center rounded-xl border border-cyan-400/30 bg-cyan-400/10 text-cyan-300"><i class="fa-solid fa-shield-halved text-xl" aria-hidden="true"></i></div>
+            <h3 class="mt-5 text-lg font-semibold text-white">Code propre et audité</h3>
+            <p class="mt-2 text-sm leading-relaxed text-zinc-400">Chaque code est relu, structuré et vérifié avant sa publication. Vous déployez un projet propre, pas un prototype.</p>
+          </div>
+          <div class="p-8">
+            <div class="grid h-12 w-12 place-items-center rounded-xl border border-cyan-400/30 bg-cyan-400/10 text-cyan-300"><i class="fa-solid fa-file-code text-xl" aria-hidden="true"></i></div>
+            <h3 class="mt-5 text-lg font-semibold text-white">Documentation README claire</h3>
+            <p class="mt-2 text-sm leading-relaxed text-zinc-400">Un README accompagne systématiquement chaque solution : installation, configuration et utilisation expliquées pas à pas.</p>
+          </div>
+          <div class="p-8">
+            <div class="grid h-12 w-12 place-items-center rounded-xl border border-cyan-400/30 bg-cyan-400/10 text-cyan-300"><i class="fa-solid fa-headset text-xl" aria-hidden="true"></i></div>
+            <h3 class="mt-5 text-lg font-semibold text-white">Support technique</h3>
+            <p class="mt-2 text-sm leading-relaxed text-zinc-400">Un blocage à l'installation ? Écrivez-nous sur
+              <a class="text-cyan-400 underline-offset-2 hover:underline" href="https://wa.me/2290196809106" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+              ou par
+              <a class="text-cyan-400 underline-offset-2 hover:underline" href="mailto:empiredonko@gmail.com">email</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer id="contact" class="relative overflow-hidden bg-black">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" aria-hidden="true"></div>
+
+    <div class="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
+
+      <!-- Bandeau d'appel à l'action -->
+      <div class="relative overflow-hidden rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-600/10 p-8 sm:p-10">
+        <div class="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl" aria-hidden="true"></div>
+        <div class="relative flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight text-white sm:text-3xl">Une question avant d'acheter ?</h2>
+            <p class="mt-2 max-w-xl text-zinc-400">Écrivez-nous directement. Nous vous aidons à choisir la solution adaptée à votre projet.</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a href="https://wa.me/2290196809106" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 rounded-lg bg-[#25D366] px-5 py-3 font-semibold text-black transition hover:brightness-110">
+              <i class="fa-brands fa-whatsapp text-lg" aria-hidden="true"></i>Écrire sur WhatsApp
+            </a>
+            <a href="https://empirecode.mychariow.co/" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 rounded-lg border border-white/20 px-5 py-3 font-semibold text-white transition hover:border-cyan-400/60 hover:text-cyan-300">
+              <i class="fa-solid fa-store" aria-hidden="true"></i>Visiter la boutique
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Signature + liens -->
+      <div class="grid gap-12 py-14 lg:grid-cols-12">
+        <div class="lg:col-span-5">
+          <div class="flex items-center gap-4">
+            <img src="donko.png" alt="Logo EMPIRE CODE" width="80" height="80"
+                 class="h-20 w-20 rounded-2xl object-contain ring-1 ring-cyan-400/30 shadow-neon">
+            <div>
+              <p class="text-xl font-bold text-white">Hassane DONKO</p>
+              <p class="text-sm text-cyan-400">Créateur d'EMPIRE CODE HUB</p>
+            </div>
+          </div>
+          <p class="mt-5 max-w-md text-sm leading-relaxed text-zinc-400">
+            Scripts Node.js/PHP, utilitaires HTML autonomes, formations en intelligence artificielle et cours d'informatique, conçus pour les développeurs et les entrepreneurs.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-7">
+          <div>
+            <h3 class="text-sm font-semibold text-white">Navigation</h3>
+            <ul class="mt-4 space-y-3 text-sm text-zinc-400">
+              <li><a class="transition hover:text-cyan-400" href="#accueil">Accueil</a></li>
+              <li><a class="transition hover:text-cyan-400" href="#produits">Produits</a></li>
+              <li><a class="transition hover:text-cyan-400" href="#garanties">Garanties</a></li>
+              <li><a class="transition hover:text-cyan-400" href="https://empirecode.mychariow.co/" target="_blank" rel="noopener noreferrer">Boutique Globale</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-white">Boutique</h3>
+            <ul class="mt-4 space-y-3 text-sm text-zinc-400">
+              <li><a class="transition hover:text-cyan-400" href="https://empirecode.mychariow.co/about" target="_blank" rel="noopener noreferrer">À propos</a></li>
+              <li><a class="transition hover:text-cyan-400" href="https://empirecode.mychariow.co/help" target="_blank" rel="noopener noreferrer">Aide</a></li>
+              <li><a class="transition hover:text-cyan-400" href="https://empirecode.mychariow.co/contact" target="_blank" rel="noopener noreferrer">Contact</a></li>
+            </ul>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <h3 class="text-sm font-semibold text-white">Informations légales</h3>
+            <ul class="mt-4 space-y-3 text-sm text-zinc-400">
+              <li><a class="transition hover:text-cyan-400" href="https://empirecode.mychariow.co/legal-notice" target="_blank" rel="noopener noreferrer">Mentions légales</a></li>
+              <li><a class="transition hover:text-cyan-400" href="https://empirecode.mychariow.co/terms-of-service" target="_blank" rel="noopener noreferrer">Conditions d'utilisation</a></li>
+              <li><a class="transition hover:text-cyan-400" href="https://empirecode.mychariow.co/privacy-policy" target="_blank" rel="noopener noreferrer">Politique de confidentialité</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact direct -->
+      <div class="border-t border-white/10 pt-10">
+        <h3 class="text-sm font-semibold text-white">Contact direct</h3>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <a href="https://wa.me/2290196809106" target="_blank" rel="noopener noreferrer"
+             class="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-[#25D366]/60 hover:bg-[#25D366]/5">
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#25D366] text-black"><i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i></span>
+            <span class="min-w-0"><span class="block text-xs text-zinc-500">WhatsApp</span><span class="block truncate text-sm font-semibold text-white">+229 01 96 80 91 06</span></span>
+          </a>
+          <a href="mailto:empiredonko@gmail.com"
+             class="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-[#EA4335]/60 hover:bg-[#EA4335]/5">
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#EA4335] text-white"><i class="fa-solid fa-envelope text-lg" aria-hidden="true"></i></span>
+            <span class="min-w-0"><span class="block text-xs text-zinc-500">Email</span><span class="block truncate text-sm font-semibold text-white">empiredonko@gmail.com</span></span>
+          </a>
+          <a href="https://tiktok.com/@donkodeutsch" target="_blank" rel="noopener noreferrer"
+             class="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-cyan-400/60 hover:bg-cyan-400/5">
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-white/20 bg-black text-white"><i class="fa-brands fa-tiktok text-lg" aria-hidden="true"></i></span>
+            <span class="min-w-0"><span class="block text-xs text-zinc-500">TikTok</span><span class="block truncate text-sm font-semibold text-white">@donkodeutsch</span></span>
+          </a>
+          <a href="https://empirecode.mychariow.co/" target="_blank" rel="noopener noreferrer"
+             class="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-[#FF9900]/60 hover:bg-[#FF9900]/5">
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#FF9900] text-black"><i class="fa-solid fa-store text-lg" aria-hidden="true"></i></span>
+            <span class="min-w-0"><span class="block text-xs text-zinc-500">Boutique</span><span class="block truncate text-sm font-semibold text-white">EMPIRE CODE STORE</span></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Mentions de bas de page -->
+      <div class="mt-10 flex flex-col gap-4 border-t border-white/10 py-8 text-xs text-zinc-500 md:flex-row md:items-center md:justify-between">
+        <div class="space-y-2">
+          <p>© <span id="year">2026</span> EMPIRE CODE HUB. Édité par TransTech Dynamic. Tous droits réservés.</p>
+          <p class="max-w-2xl">Paiements et livraisons gérés par Chariow. Les informations présentes sur ce site sont fournies à titre informatif et ne constituent pas un conseil professionnel ou financier.</p>
+        </div>
+        <a href="#accueil" class="inline-flex w-fit items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-zinc-300 transition hover:border-cyan-400/50 hover:text-cyan-300">
+          <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>Haut de page
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bannière flottante d'installation (mobile) -->
+  <div id="installBanner" hidden class="install-anim fixed inset-x-3 bottom-3 z-50 lg:hidden">
+    <div class="flex items-center gap-3 rounded-2xl border border-cyan-400/30 bg-[#0b0b0e]/95 p-3 shadow-neon backdrop-blur">
+      <img src="donko.png" alt="" width="40" height="40" class="h-10 w-10 shrink-0 rounded-lg object-contain">
+      <p class="min-w-0 flex-1 text-xs leading-snug text-zinc-300">Accès rapide au catalogue, même hors ligne.</p>
+      <button id="installBannerBtn" type="button" class="shrink-0 rounded-lg bg-cyan-500 px-3 py-2 text-xs font-semibold text-black hover:bg-cyan-400">
+        Installer l'application
+      </button>
+      <button id="installBannerClose" type="button" aria-label="Fermer" class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-zinc-400 hover:text-white">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    /* ==========================================================
+     * CONFIGURATION
+     * ========================================================== */
+    const ORIGIN = 'https://empirecode.mychariow.co';
+    const CONFIG = {
+      STORE_ORIGIN: ORIGIN,
+      STORE_URL: ORIGIN + '/',
+      CACHE_KEY: 'empirecodehub:catalogue:v1',
+      REFRESH_MS: 5 * 60 * 1000,
+      TIMEOUT_MS: 7000,
+      ENRICH_CONCURRENCY: 3,
+      MAX_PRODUCTS: 60,
+      PROXIES: [
+        (u) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+        (u) => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
+        (u) => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u)
+      ],
+      RESERVED: new Set([
+        'about', 'help', 'contact', 'sitemap', 'legal-notice', 'terms-of-service', 'privacy-policy',
+        'cart', 'checkout', 'login', 'register', 'account', 'products', 'collections', 'search',
+        'blog', 'faq', 'order', 'orders', 'store', 'api', 'cdn-cgi'
+      ])
+    };
+
+    const CATEGORIES = {
+      all:        { label: 'Tous',                      icon: 'fa-layer-group' },
+      ia:         { label: 'Intelligence Artificielle', icon: 'fa-brain' },
+      scripts:    { label: 'Scripts & Codes',           icon: 'fa-code' },
+      formations: { label: 'Formations',                icon: 'fa-graduation-cap' }
+    };
+
+    /* Filet de sécurité UNIQUEMENT si la boutique est injoignable et qu'aucun cache n'existe. */
+    const FALLBACK_PRODUCTS = [{
+      slug: 'sriptnodejs',
+      title: 'DONKO EXCHANGE - Script de Plateforme Crypto-Fiat Automatisée (Node.js)',
+      description: '',
+      image: '',
+      price: '40 $US', priceValue: 40,
+      oldPrice: '600 $US', oldValue: 600,
+      discount: 93,
+      categories: ['scripts'],
+      url: ORIGIN + '/sriptnodejs',
+      checkoutUrl: ORIGIN + '/sriptnodejs/checkout'
+    }];
+
+    /* ==========================================================
+     * OUTILS
+     * ========================================================== */
+    const $ = (sel, root = document) => root.querySelector(sel);
+
+    function el(tag, props = {}, children = []) {
+      const node = document.createElement(tag);
+      for (const [k, v] of Object.entries(props)) {
+        if (v == null || v === false) continue;
+        if (k === 'class') node.className = v;
+        else if (k.startsWith('on') && typeof v === 'function') node.addEventListener(k.slice(2), v);
+        else node.setAttribute(k, v === true ? '' : v);
+      }
+      for (const c of [].concat(children)) {
+        if (c == null) continue;
+        node.append(c.nodeType ? c : document.createTextNode(String(c)));
+      }
+      return node;
+    }
+
+    const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const collapse = (s) => String(s || '').replace(/[\s\u00a0\u202f]+/g, ' ').trim();
+
+    function absHttps(src) {
+      if (!src) return '';
+      try {
+        const u = new URL(src, CONFIG.STORE_URL);
+        return u.protocol === 'https:' ? u.href : '';
+      } catch (_) { return ''; }
+    }
+
+    function prettify(slug) {
+      return collapse(String(slug || '').replace(/[-_]+/g, ' ')).replace(/^./, (c) => c.toUpperCase()) || 'Produit';
+    }
+
+    function timeAgo(ts) {
+      const s = Math.max(0, Math.round((Date.now() - ts) / 1000));
+      if (s < 45) return "à l'instant";
+      const m = Math.round(s / 60);
+      if (m < 60) return 'il y a ' + m + ' min';
+      const h = Math.round(m / 60);
+      if (h < 24) return 'il y a ' + h + ' h';
+      return 'il y a ' + Math.round(h / 24) + ' j';
+    }
+
+    /* ==========================================================
+     * RÉSEAU : accès direct, puis proxys CORS (ordre mémorisé)
+     * ========================================================== */
+    let lastGood = 0;
+
+    async function fetchWithTimeout(url, ms) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ms);
+      try {
+        const res = await fetch(url, { signal: ctrl.signal, cache: 'no-store', credentials: 'omit' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return await res.text();
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function fetchText(url, validate) {
+      if (navigator.onLine === false) throw new Error('Hors connexion');
+      const builders = [(u) => u, ...CONFIG.PROXIES];
+      const order = [lastGood, ...builders.map((_, i) => i).filter((i) => i !== lastGood)];
+      let lastErr = new Error('Réseau indisponible');
+      for (const i of order) {
+        try {
+          const txt = await fetchWithTimeout(builders[i](url), CONFIG.TIMEOUT_MS);
+          if (!txt || txt.length < 100) throw new Error('Réponse vide');
+          if (validate && !validate(txt)) throw new Error('Réponse inattendue');
+          lastGood = i;
+          return txt;
+        } catch (e) { lastErr = e; }
+      }
+      throw lastErr;
+    }
+
+    /* ==========================================================
+     * EXTRACTION : prix
+     * ========================================================== */
+    const NUM = '(\\d{1,3}(?:[\\s\\u00a0\\u202f.,]\\d{3})+(?:[.,]\\d{1,2})?|\\d+(?:[.,]\\d{1,2})?)';
+    const CUR = '(?:\\$\\s?US|US\\s?\\$|USD|\\$|€|EUR|FCFA|F\\s?CFA|XOF|XAF|CFA)';
+    const MONEY_AFTER = new RegExp(NUM + '\\s?(' + CUR + ')', 'gi');
+    const MONEY_BEFORE = new RegExp('(' + CUR + ')\\s?' + NUM, 'gi');
+
+    function toNumber(str) {
+      let s = String(str).replace(/[\s\u00a0\u202f]/g, '');
+      const lc = s.lastIndexOf(',');
+      const ld = s.lastIndexOf('.');
+      if (lc > -1 && ld > -1) {
+        const dec = Math.max(lc, ld);
+        s = s.slice(0, dec).replace(/[.,]/g, '') + '.' + s.slice(dec + 1);
+      } else if (lc > -1 || ld > -1) {
+        const i = Math.max(lc, ld);
+        const tail = s.length - i - 1;
+        s = tail === 3 ? s.replace(/[.,]/g, '') : s.slice(0, i).replace(/[.,]/g, '') + '.' + s.slice(i + 1);
+      }
+      const n = parseFloat(s);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function findMoney(text) {
+      const found = [];
+      [[MONEY_AFTER, 1], [MONEY_BEFORE, 2]].forEach(([re, group]) => {
+        re.lastIndex = 0;
+        let m;
+        while ((m = re.exec(text))) {
+          const value = toNumber(m[group]);
+          if (value != null) {
+            found.push({ start: m.index, end: m.index + m[0].length, value, raw: collapse(m[0]) });
+          }
+        }
+      });
+      found.sort((a, b) => a.start - b.start || b.end - a.end);
+      const out = [];
+      let last = -1;
+      for (const f of found) {
+        if (f.start >= last) { out.push(f); last = f.end; }
+      }
+      return out;
+    }
+
+    function stripMoney(text) {
+      return text.replace(MONEY_AFTER, ' ').replace(MONEY_BEFORE, ' ');
+    }
+
+    function pricesFrom(text) {
+      const money = findMoney(text);
+      const uniq = [];
+      money.forEach((x) => { if (!uniq.some((u) => u.value === x.value)) uniq.push(x); });
+      if (!uniq.length) {
+        if (/\b(gratuit|free)\b/i.test(text)) return { price: 'Gratuit', priceValue: 0, oldPrice: '', oldValue: null };
+        return { price: '', priceValue: null, oldPrice: '', oldValue: null };
+      }
+      const sorted = [...uniq].sort((a, b) => a.value - b.value);
+      const cur = sorted[0];
+      const old = sorted.length > 1 ? sorted[sorted.length - 1] : null;
+      return { price: cur.raw, priceValue: cur.value, oldPrice: old ? old.raw : '', oldValue: old ? old.value : null };
+    }
+
+    function formatPrice(value, currency) {
+      try {
+        if (currency) return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(value);
+      } catch (_) { /* devise inconnue */ }
+      return String(value) + (currency ? ' ' + currency : '');
+    }
+
+    /* ==========================================================
+     * EXTRACTION : catégories
+     * ========================================================== */
+    function guessCategories(text) {
+      const t = norm(text);
+      const cats = [];
+      if (/\bia\b|intelligence artificielle|chatgpt|\bgpt\b|\bllm\b|machine learning|deep learning|openai|midjourney|\bprompts?\b|\bgemini\b|\bclaude\b|deepseek/.test(t)) cats.push('ia');
+      if (/formation|\bcours\b|\bcourse\b|masterclass|bootcamp|apprendre|apprentissage|tutoriel|e-?book|coaching|atelier/.test(t)) cats.push('formations');
+      if (/script|\bcode|node\.?js|\bphp\b|python|source|template|outil|html|bot\b|api\b|plateforme|logiciel/.test(t) || !cats.length) cats.push('scripts');
+      return cats;
+    }
+
+    /* ==========================================================
+     * EXTRACTION : page d'accueil de la boutique
+     * ========================================================== */
+    function slugFromHref(href) {
+      try {
+        const u = new URL(href, CONFIG.STORE_URL);
+        if (u.origin !== CONFIG.STORE_ORIGIN) return null;
+        const seg = u.pathname.split('/').filter(Boolean);
+        if (!seg.length || seg.length > 2) return null;
+        if (seg.length === 2 && seg[1].toLowerCase() !== 'checkout') return null;
+        const slug = seg[0];
+        if (/\./.test(slug) || CONFIG.RESERVED.has(slug.toLowerCase())) return null;
+        return slug;
+      } catch (_) { return null; }
+    }
+
+    function cleanTitle(raw) {
+      let s = collapse(raw);
+      s = s.replace(/\s*-?\d{1,3}\s?%\s*(?:off|de réduction|de remise|de reduction)?\s*$/i, '').trim();
+      if (!s || s.length < 3) return '';
+      if (/^(acheter|buy|commander|voir|en savoir|détails|details|mes achats)/i.test(s)) return '';
+      const letters = (stripMoney(s).match(/[A-Za-zÀ-ÿ]/g) || []).length;
+      return letters < 3 ? '' : s.slice(0, 200);
+    }
+
+    const TITLE_SUFFIX = /\s*(?:[|•–—]|\s-\s)\s*EMPIRE CODE.*$/i;
+
+    function blankProduct(slug) {
+      return {
+        slug, title: '', titleGuess: true, description: '', image: '',
+        price: '', priceValue: null, oldPrice: '', oldValue: null, discount: 0,
+        confirmed: false,
+        url: CONFIG.STORE_ORIGIN + '/' + slug,
+        checkoutUrl: CONFIG.STORE_ORIGIN + '/' + slug + '/checkout'
+      };
+    }
+
+    function cardRoot(anchor, slug) {
+      let node = anchor;
+      let best = anchor;
+      for (let i = 0; i < 8; i++) {
+        const p = node.parentElement;
+        if (!p || p.tagName === 'BODY' || p.tagName === 'HTML') break;
+        if (p.matches('header, nav, footer, main') || p.querySelector('header, nav, footer')) break;
+        const hasOther = [...p.querySelectorAll('a[href]')].some((x) => {
+          const s = slugFromHref(x.getAttribute('href'));
+          return s && s !== slug;
+        });
+        if (hasOther) break;
+        best = p;
+        node = p;
+      }
+      return best;
+    }
+
+    function extractFromCard(root, slug) {
+      const p = blankProduct(slug);
+      const anchors = [...root.querySelectorAll('a[href]')].filter((a) => slugFromHref(a.getAttribute('href')) === slug);
+
+      const candidates = anchors.map((a) => cleanTitle(a.textContent)).filter(Boolean);
+      const alts = [...root.querySelectorAll('img[alt]')].map((i) => cleanTitle(i.getAttribute('alt'))).filter(Boolean);
+      const heading = cleanTitle((root.querySelector('h1, h2, h3, h4') || {}).textContent || '');
+      const pool = candidates.length ? candidates : (alts.length ? alts : (heading ? [heading] : []));
+      if (pool.length) {
+        p.title = pool.reduce((a, b) => (b.length > a.length ? b : a));
+        p.titleGuess = false;
+      }
+
+      const imgSrc = [...root.querySelectorAll('img')]
+        .map((i) => i.getAttribute('data-src') || i.getAttribute('src') || (i.getAttribute('srcset') || '').split(' ')[0])
+        .find((src) => src && !/flag|axazara|avatar|logo|sprite|icon/i.test(src));
+      p.image = absHttps(imgSrc);
+
+      const checkout = anchors.find((a) => /\/checkout\/?$/i.test(a.getAttribute('href') || ''));
+      if (checkout) {
+        const href = absHttps(checkout.getAttribute('href'));
+        if (href.startsWith(CONFIG.STORE_ORIGIN + '/')) { p.checkoutUrl = href; p.confirmed = true; }
+      }
+
+      const prices = pricesFrom(root.textContent || '');
+      Object.assign(p, prices);
+      if (prices.priceValue != null) p.confirmed = true;
+      return p;
+    }
+
+    function parseStoreHome(html) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const items = new Map();
+      doc.querySelectorAll('a[href]').forEach((a) => {
+        const slug = slugFromHref(a.getAttribute('href'));
+        if (!slug || items.has(slug)) return;
+        items.set(slug, extractFromCard(cardRoot(a, slug), slug));
+      });
+      return items;
+    }
+
+    /* ==========================================================
+     * EXTRACTION : page produit (complète les informations manquantes)
+     * ========================================================== */
+    function jsonLdProducts(doc) {
+      const out = [];
+      doc.querySelectorAll('script[type="application/ld+json"]').forEach((s) => {
+        try {
+          const walk = (n) => {
+            if (Array.isArray(n)) { n.forEach(walk); return; }
+            if (n && typeof n === 'object') {
+              if ([].concat(n['@type'] || []).includes('Product')) out.push(n);
+              if (n['@graph']) walk(n['@graph']);
+            }
+          };
+          walk(JSON.parse(s.textContent));
+        } catch (_) { /* JSON-LD invalide : ignoré */ }
+      });
+      return out;
+    }
+
+    function parseProductPage(html, slug) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const meta = (name) => {
+        const m = doc.querySelector('meta[property="' + name + '"], meta[name="' + name + '"]');
+        return m ? (m.getAttribute('content') || '') : '';
+      };
+      const ld = jsonLdProducts(doc)[0];
+      const d = { isProduct: false };
+
+      d.title = cleanTitle(String((ld && ld.name) || meta('og:title') || '').replace(TITLE_SUFFIX, ''));
+
+      const rawImg = ld ? [].concat(ld.image || [])[0] : '';
+      d.image = absHttps((rawImg && typeof rawImg === 'object' ? rawImg.url : rawImg) || meta('og:image'));
+
+      let desc = collapse((ld && ld.description) || meta('og:description') || meta('description')).slice(0, 240);
+      if (/^Découvrez EMPIRE CODE/i.test(desc)) desc = '';
+      d.description = desc;
+
+      const offer = ld ? [].concat(ld.offers || [])[0] : null;
+      if (offer && offer.price != null) {
+        const v = toNumber(String(offer.price));
+        if (v != null) { d.priceValue = v; d.price = formatPrice(v, offer.priceCurrency); d.isProduct = true; }
+      }
+      if (d.priceValue == null) {
+        const amount = toNumber(meta('product:price:amount') || '');
+        if (amount != null) {
+          d.priceValue = amount;
+          d.price = formatPrice(amount, meta('product:price:currency'));
+          d.isProduct = true;
+        }
+      }
+      if (d.priceValue == null) {
+        const pr = pricesFrom(((doc.body && doc.body.textContent) || '').slice(0, 6000));
+        if (pr.priceValue != null) { Object.assign(d, pr); d.isProduct = true; }
+      }
+      if (ld || html.includes('/' + slug + '/checkout')) d.isProduct = true;
+      return d;
+    }
+
+    const needsEnrich = (p) => !p.title || p.priceValue == null || !p.image || !p.confirmed;
+
+    async function enrich(p) {
+      try {
+        const html = await fetchText(p.url, (t) => /<html|<!doctype/i.test(t));
+        const d = parseProductPage(html, p.slug);
+        if ((!p.title || p.titleGuess) && d.title) { p.title = d.title; p.titleGuess = false; }
+        if (!p.image && d.image) p.image = d.image;
+        if (!p.description && d.description) p.description = d.description;
+        if (p.priceValue == null && d.priceValue != null) {
+          p.price = d.price; p.priceValue = d.priceValue;
+          if (d.oldPrice) { p.oldPrice = d.oldPrice; p.oldValue = d.oldValue; }
+        }
+        if (d.isProduct) p.confirmed = true;
+      } catch (e) {
+        console.warn('[EMPIRE CODE HUB] Détail produit indisponible :', p.slug, e.message);
+      }
+      return p;
+    }
+
+    async function pool(items, size, worker) {
+      const queue = [...items];
+      await Promise.all(Array.from({ length: Math.min(size, queue.length) }, async () => {
+        while (queue.length) await worker(queue.shift());
+      }));
+    }
+
+    /* ==========================================================
+     * NORMALISATION & SÉCURITÉ DES DONNÉES
+     * ========================================================== */
+    function finalize(p) {
+      const title = p.title || prettify(p.slug);
+      const out = Object.assign({}, p, { title });
+      out.categories = guessCategories(title + ' ' + (p.description || ''));
+      if (out.oldValue != null && out.priceValue != null && out.oldValue > out.priceValue) {
+        out.discount = Math.round((1 - out.priceValue / out.oldValue) * 100);
+      } else {
+        out.oldPrice = ''; out.oldValue = null; out.discount = 0;
+      }
+      return out;
+    }
+
+    function sanitize(p) {
+      if (!p || typeof p !== 'object') return null;
+      const str = (v, max = 300) => (typeof v === 'string' ? collapse(v).slice(0, max) : '');
+      const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+      const url = str(p.url, 500);
+      if (!url.startsWith(CONFIG.STORE_ORIGIN + '/')) return null;
+      const checkout = str(p.checkoutUrl, 500);
+      const image = str(p.image, 800);
+      const cats = (Array.isArray(p.categories) ? p.categories : []).filter((c) => ['ia', 'scripts', 'formations'].includes(c));
+      const discount = num(p.discount);
+      return {
+        slug: str(p.slug, 120),
+        title: str(p.title, 200) || 'Produit',
+        description: str(p.description, 260),
+        image: /^https:\/\//i.test(image) ? image : '',
+        price: str(p.price, 40),
+        priceValue: num(p.priceValue),
+        oldPrice: str(p.oldPrice, 40),
+        oldValue: num(p.oldValue),
+        discount: discount && discount > 0 && discount < 100 ? Math.round(discount) : 0,
+        categories: cats.length ? cats : ['scripts'],
+        url,
+        checkoutUrl: checkout.startsWith(CONFIG.STORE_ORIGIN + '/') ? checkout : url
+      };
+    }
+
+    /* ==========================================================
+     * SYNCHRONISATION : fetchProducts()
+     * Lit la boutique Chariow (accueil + sitemap + pages produit)
+     * ========================================================== */
+    async function fetchProducts() {
+      const [homeRes, mapRes] = await Promise.allSettled([
+        fetchText(CONFIG.STORE_URL, (t) => /chariow/i.test(t)),
+        fetchText(CONFIG.STORE_ORIGIN + '/sitemap.xml', (t) => /<loc>/i.test(t))
+      ]);
+      if (homeRes.status !== 'fulfilled') throw homeRes.reason;
+
+      const map = parseStoreHome(homeRes.value);
+
+      if (mapRes.status === 'fulfilled') {
+        for (const m of mapRes.value.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)) {
+          const slug = slugFromHref(m[1]);
+          if (slug && !map.has(slug)) map.set(slug, blankProduct(slug));
+        }
+      }
+
+      let list = [...map.values()].slice(0, CONFIG.MAX_PRODUCTS);
+      await pool(list.filter(needsEnrich), CONFIG.ENRICH_CONCURRENCY, enrich);
+      list = list.filter((p) => p.confirmed);
+      return list.map(finalize).map(sanitize).filter(Boolean);
+    }
+
+    /* ==========================================================
+     * CACHE LOCAL
+     * ========================================================== */
+    function loadCache() {
+      try {
+        const raw = localStorage.getItem(CONFIG.CACHE_KEY);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.items)) return null;
+        const items = data.items.map(sanitize).filter(Boolean);
+        return items.length ? { items, ts: Number(data.ts) || 0 } : null;
+      } catch (_) { return null; }
+    }
+
+    function saveCache(items, ts) {
+      try { localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify({ ts, items })); } catch (_) { /* stockage indisponible */ }
+    }
+
+    /* ==========================================================
+     * INTERFACE : catalogue
+     * ========================================================== */
+    const state = { items: [], filter: 'all', ts: 0, mode: 'loading' };
+    const gridEl = $('#grid');
+    const filtersEl = $('#filters');
+    const statusEl = $('#syncStatus');
+    const dotEl = $('#syncDot');
+    const refreshBtn = $('#refreshBtn');
+    const refreshIcon = $('#refreshIcon');
+
+    const FILTER_ON = 'border-cyan-400 bg-cyan-500 text-black';
+    const FILTER_OFF = 'border-white/15 text-zinc-300 hover:border-cyan-400/50 hover:text-cyan-300';
+
+    function renderFilters() {
+      filtersEl.replaceChildren();
+      Object.entries(CATEGORIES).forEach(([key, cat]) => {
+        const count = key === 'all' ? state.items.length : state.items.filter((p) => p.categories.includes(key)).length;
+        const active = state.filter === key;
+        const btn = el('button', {
+          type: 'button',
+          'aria-pressed': String(active),
+          class: 'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ' + (active ? FILTER_ON : FILTER_OFF),
+          onclick: () => { state.filter = key; renderFilters(); renderGrid(); }
+        }, [
+          el('i', { class: 'fa-solid ' + cat.icon, 'aria-hidden': 'true' }),
+          cat.label,
+          el('span', { class: 'rounded-full px-1.5 text-xs ' + (active ? 'bg-black/20' : 'bg-white/10') }, String(count))
+        ]);
+        filtersEl.append(btn);
+      });
+    }
+
+    function buildCard(p) {
+      const cat = CATEGORIES[p.categories[0]] || CATEGORIES.scripts;
+
+      const media = el('div', { class: 'relative aspect-[16/9] overflow-hidden border-b border-white/10 bg-gradient-to-br from-cyan-500/10 via-black to-blue-600/10' }, [
+        el('div', { class: 'absolute inset-0 grid place-items-center text-cyan-300/50', 'aria-hidden': 'true' }, [
+          el('i', { class: 'fa-solid ' + cat.icon + ' text-5xl' })
+        ])
+      ]);
+      if (p.image) {
+        const img = el('img', {
+          src: p.image, alt: '', loading: 'lazy', decoding: 'async', referrerpolicy: 'no-referrer',
+          class: 'absolute inset-0 h-full w-full object-cover'
+        });
+        img.addEventListener('error', () => img.remove());
+        media.append(img);
+      }
+      if (p.discount) {
+        media.append(el('span', { class: 'absolute left-3 top-3 rounded-md bg-cyan-400 px-2 py-1 text-xs font-bold text-black' }, '-' + p.discount + '%'));
+      }
+
+      const priceRow = el('div', { class: 'mt-5 flex items-baseline gap-3' });
+      if (p.price) {
+        priceRow.append(el('span', { class: 'text-2xl font-extrabold text-cyan-300' }, p.price));
+        if (p.oldPrice) priceRow.append(el('s', { class: 'text-sm text-zinc-500' }, p.oldPrice));
+      } else {
+        priceRow.append(el('span', { class: 'text-sm text-zinc-400' }, 'Prix affiché sur la boutique'));
+      }
+
+      const body = el('div', { class: 'flex flex-1 flex-col p-5' }, [
+        el('span', { class: 'inline-flex w-fit items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-300' }, [
+          el('i', { class: 'fa-solid ' + cat.icon, 'aria-hidden': 'true' }),
+          cat.label
+        ]),
+        el('h3', { class: 'mt-4 line-clamp-3 text-base font-semibold leading-snug text-white' }, p.title),
+        p.description ? el('p', { class: 'mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-400' }, p.description) : null,
+        el('div', { class: 'mt-auto' }, [
+          priceRow,
+          el('div', { class: 'mt-5 flex gap-2' }, [
+            el('a', {
+              href: p.checkoutUrl, target: '_blank', rel: 'noopener noreferrer',
+              'aria-label': 'Acheter : ' + p.title,
+              class: 'inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-cyan-500 px-4 py-3 text-sm font-semibold text-black transition hover:bg-cyan-400'
+            }, [el('i', { class: 'fa-solid fa-cart-shopping', 'aria-hidden': 'true' }), 'Acheter maintenant']),
+            el('a', {
+              href: p.url, target: '_blank', rel: 'noopener noreferrer',
+              'aria-label': 'Voir le détail : ' + p.title,
+              class: 'grid w-12 place-items-center rounded-lg border border-white/15 text-zinc-300 transition hover:border-cyan-400/60 hover:text-cyan-300'
+            }, [el('i', { class: 'fa-solid fa-arrow-up-right-from-square', 'aria-hidden': 'true' })])
+          ])
+        ])
+      ]);
+
+      return el('article', { class: 'flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-panel transition hover:border-cyan-400/40' }, [media, body]);
+    }
+
+    function buildSkeleton() {
+      return el('div', { class: 'animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-panel', 'aria-hidden': 'true' }, [
+        el('div', { class: 'aspect-[16/9] bg-white/5' }),
+        el('div', { class: 'space-y-3 p-5' }, [
+          el('div', { class: 'h-4 w-1/3 rounded bg-white/10' }),
+          el('div', { class: 'h-4 w-5/6 rounded bg-white/10' }),
+          el('div', { class: 'h-8 w-1/2 rounded bg-white/10' }),
+          el('div', { class: 'h-11 rounded bg-white/10' })
+        ])
+      ]);
+    }
+
+    function renderGrid() {
+      gridEl.replaceChildren();
+      if (state.mode === 'loading' && !state.items.length) {
+        gridEl.setAttribute('aria-busy', 'true');
+        for (let i = 0; i < 3; i++) gridEl.append(buildSkeleton());
+        return;
+      }
+      gridEl.setAttribute('aria-busy', 'false');
+      const list = state.filter === 'all' ? state.items : state.items.filter((p) => p.categories.includes(state.filter));
+      if (!list.length) {
+        gridEl.append(el('div', { class: 'col-span-full rounded-2xl border border-dashed border-white/15 p-10 text-center text-zinc-400' }, [
+          el('p', {}, 'Aucun produit dans cette catégorie pour le moment.'),
+          el('a', { href: CONFIG.STORE_URL, target: '_blank', rel: 'noopener noreferrer', class: 'mt-4 inline-flex items-center gap-2 text-cyan-400 hover:underline' }, [
+            el('i', { class: 'fa-solid fa-store', 'aria-hidden': 'true' }), 'Voir toute la boutique'
+          ])
+        ]));
+        return;
+      }
+      list.forEach((p) => gridEl.append(buildCard(p)));
+    }
+
+    function setStatus() {
+      const dot = 'h-2.5 w-2.5 rounded-full ';
+      if (state.mode === 'loading') {
+        statusEl.textContent = 'Synchronisation avec la boutique…';
+        dotEl.className = dot + 'bg-zinc-500 animate-pulse';
+      } else if (state.mode === 'live') {
+        statusEl.textContent = 'Catalogue synchronisé avec Chariow, ' + timeAgo(state.ts);
+        dotEl.className = dot + 'bg-emerald-400';
+      } else if (state.mode === 'cache') {
+        statusEl.textContent = 'Boutique injoignable : dernier catalogue enregistré, ' + timeAgo(state.ts);
+        dotEl.className = dot + 'bg-amber-400';
+      } else {
+        statusEl.textContent = 'Boutique injoignable : sélection affichée. Réessayez avec le bouton d\u2019actualisation.';
+        dotEl.className = dot + 'bg-amber-400';
+      }
+    }
+
+    let syncing = false;
+
+    async function sync() {
+      if (syncing) return;
+      syncing = true;
+      refreshIcon.classList.add('spin');
+      if (!state.items.length) { state.mode = 'loading'; renderGrid(); }
+      setStatus();
+      try {
+        const items = await fetchProducts();
+        if (!items.length) throw new Error('Aucun produit détecté');
+        state.items = items;
+        state.ts = Date.now();
+        state.mode = 'live';
+        saveCache(items, state.ts);
+      } catch (e) {
+        console.warn('[EMPIRE CODE HUB] Synchronisation impossible :', e && e.message);
+        if (state.items.length && state.mode !== 'fallback') {
+          state.mode = 'cache';
+        } else {
+          state.items = FALLBACK_PRODUCTS.map(sanitize).filter(Boolean);
+          state.mode = 'fallback';
+        }
+      } finally {
+        syncing = false;
+        refreshIcon.classList.remove('spin');
+        renderFilters();
+        renderGrid();
+        setStatus();
+      }
+    }
+
+    refreshBtn.addEventListener('click', sync);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && Date.now() - state.ts > CONFIG.REFRESH_MS) sync();
+    });
+    window.addEventListener('online', sync);
+    setInterval(setStatus, 60 * 1000);
+
+    /* Démarrage : affichage immédiat du cache, puis synchronisation */
+    renderFilters();
+    const cached = loadCache();
+    if (cached) {
+      state.items = cached.items;
+      state.ts = cached.ts;
+      state.mode = 'cache';
+      renderFilters();
+    }
+    renderGrid();
+    sync();
+
+    /* ==========================================================
+     * NAVBAR : menu mobile + année du footer
+     * ========================================================== */
+    const menuBtn = $('#menuBtn');
+    const mobileMenu = $('#mobileMenu');
+    function setMenu(open) {
+      mobileMenu.hidden = !open;
+      menuBtn.setAttribute('aria-expanded', String(open));
+      menuBtn.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+    }
+    menuBtn.addEventListener('click', () => setMenu(mobileMenu.hidden));
+    document.querySelectorAll('.mobile-link').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+    $('#year').textContent = String(new Date().getFullYear());
+
+    /* ==========================================================
+     * HERO : terminal (une seule séquence de saisie)
+     * ========================================================== */
+    (function terminal() {
+      const out = $('#terminal');
+      const script = [
+        { text: '$ npm run verify', cls: 'text-zinc-200' },
+        { text: '\u2714 dépendances vérifiées', check: true },
+        { text: '\u2714 README.md présent', check: true },
+        { text: '\u2714 licence activée', check: true },
+        { text: '\u2714 prêt à déployer', check: true }
+      ];
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const lineNode = (l) => {
+        const row = el('div', { class: l.cls || '' });
+        if (l.check) {
+          row.append(el('span', { class: 'text-cyan-400' }, '\u2714'));
+          row.append(document.createTextNode(l.text.slice(1)));
+        } else {
+          row.textContent = l.text;
+        }
+        return row;
+      };
+
+      if (reduce) {
+        script.forEach((l) => out.append(lineNode(l)));
+        return;
+      }
+
+      let li = 0;
+      let ci = 0;
+      let row = null;
+      const tick = () => {
+        if (li >= script.length) { if (row) row.classList.add('term-caret'); return; }
+        const l = script[li];
+        if (!row) { row = el('div', { class: l.cls || '' }); out.append(row); }
+        row.classList.add('term-caret');
+        ci++;
+        const slice = l.text.slice(0, ci);
+        if (l.check) {
+          row.replaceChildren(el('span', { class: 'text-cyan-400' }, slice.slice(0, 1)), document.createTextNode(slice.slice(1)));
+        } else {
+          row.textContent = slice;
+        }
+        row.classList.add('term-caret');
+        if (ci >= l.text.length) {
+          row.classList.remove('term-caret');
+          li++; ci = 0; row = null;
+          setTimeout(tick, l.check ? 260 : 420);
+        } else {
+          setTimeout(tick, 28);
+        }
+      };
+      setTimeout(tick, 500);
+    })();
+
+    /* ==========================================================
+     * PWA : service worker + bouton « Installer l'application »
+     * ========================================================== */
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch((e) => console.warn('[EMPIRE CODE HUB] Service worker :', e));
+      });
+    }
+
+    let deferredPrompt = null;
+    let bannerDismissed = false;
+    const installNavBtn = $('#installNavBtn');
+    const installBanner = $('#installBanner');
+    const installBannerBtn = $('#installBannerBtn');
+    const installBannerClose = $('#installBannerClose');
+
+    const isStandalone = () =>
+      window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    function showInstall(visible) {
+      installNavBtn.hidden = !visible;
+      installBanner.hidden = !visible || bannerDismissed;
+    }
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      if (isStandalone()) return;
+      deferredPrompt = event;
+      showInstall(true);
+    });
+
+    async function installApp() {
+      if (!deferredPrompt) return;
+      const promptEvent = deferredPrompt;
+      promptEvent.prompt();
+      try { await promptEvent.userChoice; } catch (_) { /* choix non disponible */ }
+      deferredPrompt = null;
+      showInstall(false);
+    }
+
+    installNavBtn.addEventListener('click', installApp);
+    installBannerBtn.addEventListener('click', installApp);
+    installBannerClose.addEventListener('click', () => { bannerDismissed = true; installBanner.hidden = true; });
+    window.addEventListener('appinstalled', () => { deferredPrompt = null; showInstall(false); });
+  })();
+  </script>
+</body>
+</html>
