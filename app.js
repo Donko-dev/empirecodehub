@@ -452,29 +452,63 @@
     setSEO({ title: t('Couverture mondiale'), description: t('Clients sur les six continents, avec une priorité pour l’Afrique de l’Ouest, l’Europe, l’Amérique du Nord et l’Asie-Pacifique.'), path: 'couverture.html' });
   }
   function renderBooking(main) {
-    const B = D.booking || {}, zone = B.timezone || 'Africa/Porto-Novo', len = Number(B.slotMinutes) || 30, week = B.week || {}, blocked = new Set(B.blocked || []);
-    const slotsFor = (ds) => { const [y, m, d] = ds.split('-').map(Number), dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay(), out = []; if (blocked.has(ds)) return out; (week[dow] || []).forEach(([a, b]) => { let c = +a.slice(0, 2) * 60 + +a.slice(3, 5); const e = +b.slice(0, 2) * 60 + +b.slice(3, 5); while (c + len <= e) { out.push([Math.floor(c / 60), c % 60]); c += len; } }); return out; };
-    const days = []; for (let i = 0; i < 45; i++) { const d = new Date(); d.setDate(d.getDate() + i); const s = d.toISOString().slice(0, 10), sl = slotsFor(s); if (sl.length) days.push({ s, sl }); }
+    const B = D.booking || {}, len = Number(B.slotMinutes) || 30, week = B.week || {}, blocked = new Set(B.blocked || []);
+    const offset = Number(B.utcOffset != null ? B.utcOffset : 1);
+    const zone = B.timezone || 'Africa/Porto-Novo';
+    const minMs = now() + (Number(B.minNoticeHours) || 12) * 3600000;
+    const maxMs = now() + (Number(B.maxDaysAhead) || 45) * 86400000;
+    const ymd = (dt) => [dt.getFullYear(), String(dt.getMonth() + 1).padStart(2, '0'), String(dt.getDate()).padStart(2, '0')].join('-');
+    const slotsFor = (ds) => {
+      const [y, m, d] = ds.split('-').map(Number), dow = new Date(y, m - 1, d).getDay(), out = [];
+      if (blocked.has(ds)) return out;
+      (week[dow] || []).forEach(([a, b]) => {
+        let c = +a.slice(0, 2) * 60 + +a.slice(3, 5); const e = +b.slice(0, 2) * 60 + +b.slice(3, 5);
+        while (c + len <= e) { const ms = Date.UTC(y, m - 1, d, Math.floor(c / 60) - offset, c % 60); if (ms >= minMs && ms <= maxMs) out.push(ms); c += len; }
+      });
+      return out;
+    };
+    const days = [];
+    for (let i = 0; i < 46; i++) { const dt = new Date(); dt.setDate(dt.getDate() + i); const s0 = ymd(dt), sl = slotsFor(s0); if (sl.length) days.push({ s: s0, sl }); }
+    const timeLabel = (ms) => new Date(ms).toLocaleTimeString(meta().locale, { hour: '2-digit', minute: '2-digit' });
     let pick = null, time = null;
-    const dayList = h('div', 'grid grid-cols-2 gap-2 sm:grid-cols-3'), timeList = h('div', 'mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4'), out = h('div', 'mt-6');
+    const dayList = h('div', 'grid grid-cols-2 gap-2 sm:grid-cols-3');
+    const timeList = h('div', 'mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4');
+    const out = h('div', 'mt-6');
+    const timeBox = h('div', { id: 'bookTimes' }, [h('p', 'text-zinc-400', t('Sélectionnez d’abord un jour.'))]);
     const types = B.meetingTypes || ['Appel WhatsApp'];
+    const reveal = (el) => { try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) { /* ignoré */ } };
     const drawOut = () => {
       out.replaceChildren();
-      if (!pick || !time) return;
-      const when = fmtDate(pick.s + 'T' + time + ':00', { dateStyle: 'full', timeStyle: 'short' });
+      if (!pick || time === null) return;
+      const when = fmtDate(time, { dateStyle: 'full', timeStyle: 'short' });
+      const ownerWhen = new Intl.DateTimeFormat(meta().locale, { dateStyle: 'full', timeStyle: 'short', timeZone: zone }).format(new Date(time));
       const sel = h('select', { class: 'field mb-3' }, types.map((x) => h('option', { value: x }, x)));
       const name = h('input', { class: 'field mb-3', placeholder: t('Nom complet'), required: true });
       const contact = h('input', { class: 'field mb-3', placeholder: t('nom@exemple.com ou +229 …'), required: true });
       const note = h('textarea', { class: 'field', rows: 3, placeholder: t('Sujet de votre projet (facultatif)') });
-      const msg = () => ['Demande de rendez-vous — ' + S.brand, '', t('Date et heure') + ' : ' + when + ' (' + t('Heure du propriétaire') + ' : ' + zone + ')', 'Type : ' + sel.value, 'Durée : ' + len + ' min', 'Nom : ' + name.value.trim(), 'Contact : ' + contact.value.trim(), '', note.value.trim()].join('\n');
+      const msg = () => ['Demande de rendez-vous — ' + S.brand, '', t('Date et heure') + ' : ' + when, t('Heure du propriétaire') + ' (' + zone + ') : ' + ownerWhen, 'Type : ' + sel.value, 'Durée : ' + len + ' min', 'Nom : ' + name.value.trim(), 'Contact : ' + contact.value.trim(), '', note.value.trim()].join('\n');
       const ok = () => { if (name.value.trim() && contact.value.trim()) return true; window.alert(t('Renseignez votre nom et votre contact.')); return false; };
-      out.append(h('p', 'mb-3 font-semibold text-white', when), sel, name, contact, note, h('div', 'mt-4 flex flex-col gap-3 sm:flex-row', [h('button', { type: 'button', class: 'btn-wa flex-1 justify-center', onclick: () => { if (ok()) sendWA(msg()); } }, [ic('fa-brands fa-whatsapp'), t('Confirmer par WhatsApp')]), h('button', { type: 'button', class: 'btn-ghost flex-1 justify-center', onclick: () => { if (ok()) sendMail('Demande de rendez-vous', msg()); } }, [ic('fa-solid fa-envelope'), t('Confirmer par email')])]), h('p', 'mt-3 text-xs text-zinc-500', t('Le rendez-vous est confirmé après réponse de notre part.')));
+      out.append(h('p', 'mb-3 font-semibold text-white', when), sel, name, contact, note,
+        h('div', 'mt-4 flex flex-col gap-3 sm:flex-row', [
+          h('button', { type: 'button', class: 'btn-wa flex-1 justify-center', onclick: () => { if (ok()) sendWA(msg()); } }, [ic('fa-brands fa-whatsapp'), t('Confirmer par WhatsApp')]),
+          h('button', { type: 'button', class: 'btn-ghost flex-1 justify-center', onclick: () => { if (ok()) sendMail('Demande de rendez-vous', msg()); } }, [ic('fa-solid fa-envelope'), t('Confirmer par email')])]),
+        h('p', 'mt-3 text-xs text-zinc-500', t('Le rendez-vous est confirmé après réponse de notre part.')));
     };
-    const drawTimes = () => { timeList.replaceChildren(); if (!pick) return; pick.sl.forEach(([hh, mm]) => { const lbl = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0'); timeList.append(h('button', { type: 'button', class: 'rounded-lg border px-2 py-2 text-sm ' + (time === lbl ? 'border-cyan-400 bg-cyan-500 text-black' : 'border-white/15 text-zinc-200'), onclick: () => { time = lbl; drawTimes(); drawOut(); } }, lbl)); }); };
-    const drawDays = () => { dayList.replaceChildren(); days.forEach((d) => dayList.append(h('button', { type: 'button', class: 'rounded-xl border px-3 py-3 text-start text-sm ' + (pick && pick.s === d.s ? 'border-cyan-400 bg-cyan-500 text-black' : 'border-white/15 text-zinc-200'), onclick: () => { pick = d; time = null; drawDays(); drawTimes(); drawOut(); } }, [h('span', 'block font-semibold', fmtDate(d.s + 'T12:00:00', { weekday: 'short', day: 'numeric', month: 'short' })), h('span', 'block text-xs opacity-70', d.sl.length + ' ' + t('créneaux'))]))); };
+    const drawTimes = () => {
+      timeList.replaceChildren();
+      if (!pick) { timeBox.replaceChildren(h('p', 'text-zinc-400', t('Sélectionnez d’abord un jour.'))); return; }
+      pick.sl.forEach((ms) => timeList.append(h('button', { type: 'button', 'aria-pressed': String(time === ms), class: 'rounded-lg border px-2 py-2 text-sm ' + (time === ms ? 'border-cyan-400 bg-cyan-500 text-black' : 'border-white/15 text-zinc-200'), onclick: () => { time = ms; drawTimes(); drawOut(); reveal(out); } }, timeLabel(ms))));
+      timeBox.replaceChildren(h('p', 'mb-1 text-sm text-zinc-400', fmtDate(pick.s + 'T12:00:00', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + pick.sl.length + ' ' + t('créneaux')), timeList, out);
+    };
+    const drawDays = () => {
+      dayList.replaceChildren();
+      days.forEach((d) => dayList.append(h('button', { type: 'button', 'aria-pressed': String(!!pick && pick.s === d.s), class: 'rounded-xl border px-3 py-3 text-start text-sm ' + (pick && pick.s === d.s ? 'border-cyan-400 bg-cyan-500 text-black' : 'border-white/15 text-zinc-200'), onclick: () => { pick = d; time = null; drawDays(); drawTimes(); drawOut(); reveal(timeBox); } }, [h('span', 'block font-semibold', fmtDate(d.s + 'T12:00:00', { weekday: 'short', day: 'numeric', month: 'short' })), h('span', 'block text-xs opacity-70', d.sl.length + ' ' + t('créneaux'))])));
+    };
     drawDays();
     const sujet = new URLSearchParams(location.search).get('sujet') || '';
-    const body = h('div', 'grid gap-8 lg:grid-cols-2', [h('div', {}, [h('h2', 'mb-4 text-lg font-semibold text-white', t('1. Choisissez un jour')), days.length ? dayList : h('p', 'text-zinc-400', t('Aucun créneau disponible pour le moment.'))]), h('div', {}, [h('h2', 'mb-4 text-lg font-semibold text-white', t('2. Choisissez une heure')), pick ? timeList : h('p', 'text-zinc-400', t('Sélectionnez d’abord un jour.')), out])]);
+    const body = h('div', 'grid gap-8 lg:grid-cols-2', [
+      h('div', {}, [h('h2', 'mb-4 text-lg font-semibold text-white', t('1. Choisissez un jour')), days.length ? dayList : h('p', 'text-zinc-400', t('Aucun créneau disponible pour le moment.'))]),
+      h('div', {}, [h('h2', 'mb-4 text-lg font-semibold text-white', t('2. Choisissez une heure')), timeBox])]);
     main.replaceChildren(pageHeader(t('Prendre rendez-vous'), t('Réservez un créneau pour parler de votre projet : site, application, blockchain, robot de trading ou formation.'), [t('Rendez-vous')]),
       section('py-12', [sujet ? h('p', 'mb-6 rounded-xl border border-cyan-400/30 bg-cyan-400/5 px-4 py-3 text-sm text-cyan-200', t('Demande de devis') + ' — ' + sujet) : null, body]),
       section('pb-16', [heading(t('Nos contacts')), h('div', 'grid gap-3 sm:grid-cols-2 lg:grid-cols-4', [['WhatsApp', '+' + WA, 'https://wa.me/' + WA], [t('Email'), MAIL, 'mailto:' + MAIL], ['TikTok', '@donkodeutsch', C.tiktok], ['GitHub', 'Donko-dev', C.github]].filter((c) => c[2]).map(([l, v, u]) => h('a', { href: u, target: /^https?:/.test(u) ? '_blank' : null, rel: 'noopener', class: 'rounded-2xl border border-white/10 bg-panel p-4 transition hover:border-cyan-400/40' }, [h('span', 'block text-xs text-zinc-500', l), h('span', 'block truncate font-semibold text-white', v)])))]));

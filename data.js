@@ -268,7 +268,7 @@ window.EMPIRE_DATA = {
     ]
   },
   "booking": {
-    "timezone": "Africa/Porto-Novo", "slotMinutes": 30, "bufferMinutes": 0, "minNoticeHours": 12, "maxDaysAhead": 45,
+    "timezone": "Africa/Porto-Novo", "utcOffset": 1, "slotMinutes": 30, "bufferMinutes": 0, "minNoticeHours": 12, "maxDaysAhead": 45,
     "week": { "1": [["09:00", "12:00"], ["14:00", "18:00"]], "2": [["09:00", "12:00"], ["14:00", "18:00"]], "3": [["09:00", "12:00"], ["14:00", "18:00"]], "4": [["09:00", "12:00"], ["14:00", "18:00"]], "5": [["09:00", "12:00"], ["14:00", "17:00"]], "6": [["10:00", "13:00"]] },
     "blocked": [], "meetingTypes": ["Appel WhatsApp", "Visioconférence", "Rendez-vous sur place"]
   },
