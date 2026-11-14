@@ -121,7 +121,7 @@
       { k: 'price', label: 'Tarif affiché (ex. 150 USD) — vide = sur devis' }, { k: 'url', label: 'Lien d’achat (lien Chariow ou page du site)' }, { k: 'image', label: 'Image' }, { k: 'order', label: 'Ordre d’affichage', type: 'number' }, { k: 'active', label: 'Afficher sur le site', type: 'bool' }] },
     payments: { label: 'Paiement', icon: 'fa-wallet', title: 'name', fields: [
       { k: 'name', label: 'Nom du moyen (ex. MTN Mobile Money)', req: true }, { k: 'type', label: 'Type', type: 'select', options: ['Mobile Money', 'Crypto-monnaie', 'Virement bancaire', 'PayPal', 'Autre'] },
-      { k: 'country', label: 'Pays' }, { k: 'holder', label: 'Titulaire du compte' }, { k: 'account', label: 'Numéro, IBAN ou adresse' }, { k: 'network', label: 'Réseau (ex. BEP20, Ethereum) — crypto seulement' },
+      { k: 'country', label: 'Pays' }, { k: 'holder', label: 'Titulaire du compte' }, { k: 'rows', label: 'Coordonnées (une ligne par information : Libellé | Valeur)', type: 'rows' },
       { k: 'instructions', label: 'Instructions', type: 'textarea' }, { k: 'order', label: 'Ordre', type: 'number' }, { k: 'active', label: 'Afficher sur le site', type: 'bool' }] },
     trainings: { label: 'Formations', icon: 'fa-graduation-cap', title: 'title', fields: [
       { k: 'title', label: 'Nom de la formation (suivi du domaine sur le site)', req: true }, { k: 'slug', label: 'Identifiant (slug)', req: true }, { k: 'serviceSlug', label: 'Service associé', type: 'service' },
@@ -241,6 +241,7 @@
         else if (f.type === 'number') node = h('input', { id, type: 'number', class: 'field', value: v == null ? '' : String(v), min: '0', step: 'any' });
         else if (f.type === 'datetime') node = h('input', { id, type: 'datetime-local', class: 'field', value: v ? String(v).slice(0, 16) : '' });
         else if (f.type === 'list') node = h('input', { id, class: 'field', value: Array.isArray(v) ? v.join(', ') : esc(v) });
+        else if (f.type === 'rows') node = h('textarea', { id, class: 'field font-mono text-xs', rows: 8, dir: 'ltr' }, Array.isArray(v) ? v.map((r) => r[0] + ' | ' + r[1]).join('\n') : '');
         else node = h('input', { id, class: 'field', value: esc(v), dir: /url|src|link|poster|image|banner|account/i.test(f.k) ? 'ltr' : null });
       }
       inputs[f.k] = { f, node };
@@ -256,6 +257,7 @@
           if (f.type === 'number') out[k] = raw === '' ? undefined : Number(raw);
           else if (f.type === 'datetime') out[k] = raw ? raw + (raw.length === 16 ? ':00' : '') : undefined;
           else if (f.type === 'list') out[k] = raw.split(',').map((x) => x.trim()).filter(Boolean);
+          else if (f.type === 'rows') out[k] = raw.split('\n').map((l) => l.split('|').map((x) => x.trim())).filter((p) => p.length >= 2 && p[0] && p[1]).map((p) => [p[0], p.slice(1).join(' | ')]);
           else out[k] = raw.trim() === '' ? undefined : raw.trim();
         }
       }

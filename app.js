@@ -397,13 +397,25 @@
   }
   function renderPayments(main) {
     const methods = sorted(D.payments);
-    const card = (m) => h('article', 'rounded-2xl border border-white/10 bg-panel p-5', [h('h3', 'font-semibold text-white', m.name), h('p', 'mt-1 text-xs text-zinc-500', [m.type, m.country].filter(Boolean).join(' · ')), m.holder ? h('p', 'mt-3 text-sm text-zinc-300', t('Titulaire') + ' : ' + m.holder) : null,
-      m.account ? h('div', 'mt-2 flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2', [h('code', { class: 'break-all text-sm text-white' }, m.account), h('button', { type: 'button', class: 'shrink-0 text-xs text-cyan-300', onclick: async (e) => { const ok = await copyText(m.account); e.currentTarget.textContent = ok ? t('Copié') : t('Copier'); } }, t('Copier'))]) : null,
-      m.instructions ? h('p', 'mt-3 text-sm text-zinc-400', m.instructions) : null]);
-    main.replaceChildren(pageHeader(t('Coordonnées de paiement'), t('Payez en toute sécurité : par la boutique Chariow, ou avec les moyens officiels listés ci-dessous.'), [t('Paiement')]),
-      section('pt-10', [h('div', 'grid gap-5 lg:grid-cols-3', [h('div', 'rounded-2xl border border-cyan-400/30 bg-cyan-400/5 p-6 lg:col-span-2', [h('h2', 'flex items-center gap-2 text-xl font-semibold text-white', [ic('fa-solid fa-lock text-cyan-300'), t('Paiement sécurisé via Chariow')]), h('p', 'mt-3 text-zinc-300', t('Les paiements par carte et Mobile Money sont traités par Chariow. Votre achat est livré automatiquement après paiement.')), h('a', { href: STORE, target: '_blank', rel: 'noopener', class: 'btn-primary mt-5' }, [ic('fa-solid fa-cart-shopping'), t('Aller à la boutique')])]), h('div', 'rounded-2xl border border-amber-400/30 bg-amber-400/10 p-6 text-sm text-amber-100', [h('p', 'mb-2 flex items-center gap-2 font-semibold', [ic('fa-solid fa-shield-halved text-amber-300'), t('Anti-arnaque')]), h('p', {}, S.paymentNotice || '')])])]),
-      section('py-10', [methods.length ? h('div', 'grid gap-5 sm:grid-cols-2 xl:grid-cols-3', methods.map(card)) : h('p', 'text-zinc-400', t('Aucun autre moyen de paiement n’est affiché pour le moment. Utilisez la boutique sécurisée ou contactez-nous.'))]),
-      ctaBand());
+    const groups = {}; methods.forEach((m) => { const k = m.type || 'Autre'; (groups[k] = groups[k] || []).push(m); });
+    const copyBtn = (value) => { const b = h('button', { type: 'button', class: 'shrink-0 rounded-md border border-white/15 px-2.5 py-1 text-xs text-zinc-300 hover:border-cyan-400/50 hover:text-cyan-300' }, t('Copier')); b.addEventListener('click', async () => { const ok = await copyText(value); b.textContent = ok ? t('Copié') : t('Copier'); setTimeout(() => { b.textContent = t('Copier'); }, 1500); }); return b; };
+    const card = (m) => h('article', 'rounded-2xl border border-white/10 bg-panel p-6', [
+      h('h3', 'font-semibold text-white', m.name),
+      h('p', 'mt-1 text-xs text-zinc-500', [m.country, m.holder ? t('Titulaire') + ' : ' + m.holder : null].filter(Boolean).join(' · ')),
+      h('div', 'mt-4 space-y-3', (m.rows || []).map(([label, value]) => h('div', 'flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-black/30 px-3 py-2', [h('div', 'min-w-0', [h('p', 'text-xs text-zinc-500', label), h('code', { class: 'block break-all font-mono text-sm text-white', dir: 'ltr' }, value)]), copyBtn(value)]))),
+      m.instructions ? h('p', 'mt-4 rounded-lg bg-amber-400/10 p-3 text-xs text-amber-200', m.instructions) : null
+    ]);
+    const TYPE_ORDER = ['Virement bancaire', 'Crypto-monnaie', 'Mobile Money'];
+    const keys = Object.keys(groups).sort((a, b) => (TYPE_ORDER.indexOf(a) < 0 ? 99 : TYPE_ORDER.indexOf(a)) - (TYPE_ORDER.indexOf(b) < 0 ? 99 : TYPE_ORDER.indexOf(b)));
+    main.replaceChildren(
+      pageHeader(t('Coordonnées de paiement'), t('Voici l’ensemble de mes coordonnées de paiement, disponibles pour toute prestation de développement, de documentation ou de conseil en intelligence artificielle. Vous pouvez choisir librement le moyen qui vous convient le mieux.'), [t('Paiement')]),
+      section('pt-10', [h('div', 'flex gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100', [ic('fa-solid fa-shield-halved mt-0.5 text-amber-300'), h('p', {}, t('Ne payez que vers les coordonnées affichées sur cette page. En cas de doute, contactez-nous avant de payer. Nous ne demandons jamais votre phrase secrète ni vos clés privées.'))]),
+        h('div', 'mt-6 grid gap-3 sm:grid-cols-3', [h('div', 'rounded-2xl border border-cyan-400/30 bg-cyan-400/5 p-5 sm:col-span-3', [h('p', 'flex items-center gap-2 font-semibold text-white', [ic('fa-solid fa-lock text-cyan-300'), t('Paiement sécurisé via Chariow')]), h('p', 'mt-2 text-sm text-zinc-300', t('Les paiements par carte et Mobile Money sont traités par Chariow. Votre achat est livré automatiquement après paiement.')), h('a', { href: STORE, target: '_blank', rel: 'noopener', class: 'btn-primary mt-4 inline-flex' }, [ic('fa-solid fa-cart-shopping'), t('Aller à la boutique')])])])]),
+      ...keys.map((k) => section('py-8', [h('h2', 'mb-5 text-xl font-bold text-white', t(k)), h('div', 'grid gap-5 md:grid-cols-2 xl:grid-cols-3', groups[k].map(card))])),
+      methods.length ? null : section('py-8', [h('p', 'text-zinc-400', t('Aucun autre moyen de paiement n’est affiché pour le moment. Utilisez la boutique sécurisée ou contactez-nous.'))]),
+      section('py-10', [h('div', 'text-center', [h('p', 'font-semibold text-white', t('Une question avant de payer ?')), h('div', 'mt-5 flex flex-wrap justify-center gap-3', [h('a', { href: 'https://wa.me/' + WA, target: '_blank', rel: 'noopener', class: 'btn-wa' }, [ic('fa-brands fa-whatsapp'), 'WhatsApp']), h('a', { href: 'mailto:' + MAIL, class: 'btn-ghost' }, [ic('fa-solid fa-envelope'), t('Email')])])])]),
+      ctaBand()
+    );
     setSEO({ title: t('Coordonnées de paiement'), description: t('Payez en toute sécurité : par la boutique Chariow, ou avec les moyens officiels listés ci-dessous.'), path: 'paiement.html' });
   }
   function renderPortfolio(main) {

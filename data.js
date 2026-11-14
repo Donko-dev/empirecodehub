@@ -31,7 +31,211 @@ window.EMPIRE_DATA = {
     { "slug": "audit", "title": "Audit & maintenance", "description": "Audit de sécurité, correction de failles, optimisation et maintenance continue de vos projets web et blockchain.", "tags": ["Audit", "Sécurité", "DevOps"], "image": "service-audit.svg", "order": 15, "active": true }
   ],
   "robots": [],
-  "payments": [],
+  "payments": [
+    {
+      "name": "Virement USD (États-Unis)",
+      "type": "Virement bancaire",
+      "country": "États-Unis",
+      "holder": "HASSANE DONKO",
+      "rows": [
+        [
+          "Bank Name",
+          "Lead Bank"
+        ],
+        [
+          "Routing Number",
+          "101019644"
+        ],
+        [
+          "Account Number",
+          "215680104206"
+        ],
+        [
+          "Account Type",
+          "CHECKING"
+        ],
+        [
+          "Beneficiary Name",
+          "HASSANE DONKO"
+        ],
+        [
+          "Bank Address",
+          "1801 Main St., Kansas City, MO 64108, USA"
+        ],
+        [
+          "Beneficiary Address",
+          "Rue 2401, 3291 Cotonou, Littoral, 00229, Benin"
+        ]
+      ],
+      "instructions": "Les virements doivent être envoyés strictement au nom du bénéficiaire : HASSANE DONKO.",
+      "order": 1,
+      "active": true
+    },
+    {
+      "name": "Virement EUR SEPA (Europe)",
+      "type": "Virement bancaire",
+      "country": "Europe",
+      "holder": "HASSANE DONKO",
+      "rows": [
+        [
+          "Bank Name",
+          "Banking Circle S.A."
+        ],
+        [
+          "BIC / SWIFT",
+          "BCIRLULL"
+        ],
+        [
+          "IBAN",
+          "LU684080000043444040"
+        ],
+        [
+          "Account Holder Name",
+          "HASSANE DONKO"
+        ],
+        [
+          "Bank Address",
+          "2 Boulevard de la Foire, L-1528 Luxembourg"
+        ]
+      ],
+      "order": 2,
+      "active": true
+    },
+    {
+      "name": "Colombie (COP, Bre-B)",
+      "type": "Virement bancaire",
+      "country": "Colombie",
+      "holder": "HASSANE DONKO",
+      "rows": [
+        [
+          "Account Holder",
+          "HASSANE DONKO"
+        ],
+        [
+          "Bre-B ID",
+          "@CBDD234M3"
+        ]
+      ],
+      "order": 3,
+      "active": true
+    },
+    {
+      "name": "Airtm (transfert direct)",
+      "type": "Virement bancaire",
+      "country": "International",
+      "holder": "",
+      "rows": [
+        [
+          "Airtm Account Email",
+          "hassanezakari200@gmail.com"
+        ]
+      ],
+      "order": 4,
+      "active": true
+    },
+    {
+      "name": "Binance Pay",
+      "type": "Crypto-monnaie",
+      "country": "",
+      "holder": "",
+      "rows": [
+        [
+          "Binance Pay ID",
+          "728794362"
+        ]
+      ],
+      "order": 5,
+      "active": true
+    },
+    {
+      "name": "Stablecoins USD (USDT / USDC)",
+      "type": "Crypto-monnaie",
+      "country": "",
+      "holder": "",
+      "rows": [
+        [
+          "USDT (TRC-20)",
+          "TUFjDvo75ZY1MSZmd4N8uk8cZjyXre9Zoq"
+        ],
+        [
+          "USDT (BEP-20)",
+          "0x0b45411f73e56a4d9d2ef34778560da21276d7e1"
+        ],
+        [
+          "USDT (ERC-20)",
+          "0x0b45411f73e56a4d9d2ef34778560da21276d7e1"
+        ],
+        [
+          "USDC (BEP-20)",
+          "0x0b45411f73e56a4d9d2ef34778560da21276d7e1"
+        ],
+        [
+          "USDC (ERC-20)",
+          "0x0b45411f73e56a4d9d2ef34778560da21276d7e1"
+        ]
+      ],
+      "order": 6,
+      "active": true
+    },
+    {
+      "name": "Cryptos natives (BTC, ETH, BNB, SOL, TRX)",
+      "type": "Crypto-monnaie",
+      "country": "",
+      "holder": "",
+      "rows": [
+        [
+          "Bitcoin (BTC)",
+          "bc1qhvtkwz9mr7ttjjv6s5l9epjasg2tdpg2vww6c2"
+        ],
+        [
+          "Ethereum (ETH)",
+          "0x0b45411f73e56a4d9d2ef34778560da21276d7e1"
+        ],
+        [
+          "BNB (BEP-20)",
+          "0x0b45411f73e56a4d9d2ef34778560da21276d7e1"
+        ],
+        [
+          "Solana (SOL)",
+          "9iwzsJFQapsXi9at9Sei7ndCbmJJQB8jjvuNqxcH6Zv9"
+        ],
+        [
+          "Tron (TRX)",
+          "TUFjDvo75ZY1MSZmd4N8uk8cZjyXre9Zoq"
+        ]
+      ],
+      "order": 7,
+      "active": true
+    },
+    {
+      "name": "MTN Mobile Money (Bénin)",
+      "type": "Mobile Money",
+      "country": "Bénin",
+      "holder": "HASSANE DONKO",
+      "rows": [
+        [
+          "Numéro",
+          "+229 0196809106"
+        ]
+      ],
+      "order": 8,
+      "active": true
+    },
+    {
+      "name": "Moov Money (Bénin)",
+      "type": "Mobile Money",
+      "country": "Bénin",
+      "holder": "HASSANE DONKO",
+      "rows": [
+        [
+          "Numéro",
+          "+229 0199525637"
+        ]
+      ],
+      "order": 9,
+      "active": true
+    }
+  ],
   "trainings": [],
   "portfolio": [],
   "products": { "manual": [], "overrides": {} },
