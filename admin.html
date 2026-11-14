@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Centre de contrôle — EMPIRE CODE HUB</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  body{background:#05070d;color:#e4e4e7;font-family:ui-sans-serif,system-ui,"Segoe UI",Roboto,Arial,sans-serif}
+  .panel{background:#0b1020;border:1px solid rgba(255,255,255,.08)}
+  .field{width:100%;border-radius:.5rem;border:1px solid rgba(255,255,255,.14);background:#000;padding:.55rem .75rem;font-size:.875rem;color:#fff}
+  .field:focus{outline:none;border-color:#22d3ee;box-shadow:0 0 0 3px rgba(34,211,238,.2)}
+  .btn{display:inline-flex;align-items:center;gap:.4rem;border-radius:.5rem;padding:.5rem .85rem;font-size:.85rem;font-weight:600;transition:.15s}
+  .btn-p{background:#06b6d4;color:#000}.btn-p:hover{background:#22d3ee}
+  .btn-g{border:1px solid rgba(255,255,255,.15);color:#d4d4d8}.btn-g:hover{border-color:#22d3ee;color:#67e8f9}
+  .btn-d{border:1px solid rgba(248,113,113,.4);color:#fca5a5}.btn-d:hover{background:rgba(248,113,113,.1)}
+  .tab{display:flex;align-items:center;gap:.6rem;width:100%;padding:.6rem .8rem;border-radius:.5rem;color:#a1a1aa;font-size:.9rem}
+  .tab:hover{background:rgba(255,255,255,.04);color:#fff}.tab.on{background:rgba(34,211,238,.12);color:#67e8f9}
+  .badge{font-size:.7rem;border-radius:999px;padding:.15rem .55rem;border:1px solid}
+  .b-on{color:#6ee7b7;border-color:rgba(110,231,183,.4)}.b-off{color:#a1a1aa;border-color:rgba(161,161,170,.4)}
+  .b-sch{color:#fcd34d;border-color:rgba(252,211,77,.4)}.b-exp{color:#fca5a5;border-color:rgba(252,165,165,.4)}
+  .modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.75);display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow:auto}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- ============ ACCÈS PROTÉGÉ ============ -->
+<div id="gate" class="flex min-h-screen items-center justify-center p-6">
+  <form id="gateForm" class="panel w-full max-w-sm rounded-2xl p-8">
+    <div class="mb-6 flex items-center gap-3"><img src="donko.png" alt="" width="40" height="40" class="h-10 w-10 rounded-lg object-contain"><div><p class="font-bold text-white">Centre de contrôle</p><p class="text-xs text-zinc-500">EMPIRE CODE HUB</p></div></div>
+    <label for="pwd" class="mb-1.5 block text-sm text-zinc-300">Mot de passe</label>
+    <input id="pwd" type="password" class="field" autocomplete="current-password" required>
+    <p id="gateErr" class="mt-3 hidden text-sm text-rose-300" role="alert">Mot de passe incorrect.</p>
+    <button class="btn btn-p mt-5 w-full justify-center" type="submit"><i class="fa-solid fa-lock-open"></i> Entrer</button>
+    <p class="mt-5 text-xs leading-relaxed text-zinc-500">Accès réservé au propriétaire du site. Sur un site statique, ce contrôle est une protection d’interface : pour une sécurité réelle, utilisez l’espace d’administration de votre hébergement (Hostinger).</p>
+  </form>
+</div>
+
+<!-- ============ APPLICATION ============ -->
+<div id="app" class="hidden min-h-screen lg:flex">
+  <aside class="panel border-b lg:min-h-screen lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r">
+    <div class="flex items-center gap-3 p-5"><img src="donko.png" alt="" width="36" height="36" class="h-9 w-9 rounded-lg object-contain"><div><p class="text-sm font-bold text-white">Centre de contrôle</p><p class="text-xs text-zinc-500">EMPIRE CODE HUB</p></div></div>
+    <nav id="nav" class="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:overflow-visible lg:pb-0"></nav>
+    <div class="mt-auto hidden space-y-2 p-4 lg:block">
+      <button class="btn btn-g w-full justify-center" id="btnPreview"><i class="fa-solid fa-eye"></i> Aperçu du site</button>
+      <button class="btn btn-p w-full justify-center" id="btnExport"><i class="fa-solid fa-download"></i> Télécharger data.js</button>
+      <button class="btn btn-d w-full justify-center" id="btnReset"><i class="fa-solid fa-rotate-left"></i> Annuler les modifications</button>
+    </div>
+  </aside>
+  <main class="min-w-0 flex-1 p-4 sm:p-8">
+    <div class="mb-6 flex flex-wrap gap-2 lg:hidden">
+      <button class="btn btn-g" id="btnPreview2"><i class="fa-solid fa-eye"></i> Aperçu</button>
+      <button class="btn btn-p" id="btnExport2"><i class="fa-solid fa-download"></i> data.js</button>
+    </div>
+    <div id="notice" class="mb-4 hidden rounded-lg border border-cyan-400/30 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-200" role="status"></div>
+    <section id="view"></section>
+    <p class="mt-10 text-xs text-zinc-600">Vos modifications sont conservées automatiquement dans ce navigateur. Pour les publier sur le site, téléchargez <b>data.js</b> et remplacez le fichier à la racine de votre site.</p>
+  </main>
+</div>
+
+<div id="modalRoot"></div>
+
+<script src="data.js"></script>
+<script>
+(() => {
+  'use strict';
+  const HASH = '391a9dc924d6b2a6fde451b85559d328ad52c8f4013f02d94d48e64d7a460e1a';
+  const DRAFT_KEY = 'ec:admin-draft';
+  const ORIGINAL = JSON.parse(JSON.stringify(window.EMPIRE_DATA || {}));
+  let D = JSON.parse(JSON.stringify(ORIGINAL));
+  try { const d = localStorage.getItem(DRAFT_KEY); if (d) D = JSON.parse(d); } catch (_) { /* brouillon indisponible */ }
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const now = () => Date.now();
+  const ts = (v) => { const x = Date.parse(v); return Number.isNaN(x) ? null : x; };
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  const esc = (s) => String(s == null ? '' : s);
+  function h(tag, attrs, kids) {
+    if (typeof attrs === 'string') attrs = { class: attrs };
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v === null || v === undefined || v === false) continue;
+      if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v;
+      else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? '' : String(v));
+    }
+    for (const c of [].concat(kids == null ? [] : kids)) if (c !== null && c !== undefined && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+    return n;
+  }
+  const ic = (c) => h('i', { class: c, 'aria-hidden': 'true' });
+  const notice = (msg) => { const n = $('#notice'); n.textContent = msg; n.classList.remove('hidden'); clearTimeout(notice.t); notice.t = setTimeout(() => n.classList.add('hidden'), 3800); };
+  const save = () => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(D)); } catch (_) { /* quota */ } };
+
+  /* ---------- Accès ---------- */
+  async function sha256(text) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  async function unlock(pwd) {
+    if (!window.crypto || !crypto.subtle) return pwd === 'Allah123@@@';
+    return (await sha256(pwd)) === HASH;
+  }
+  $('#gateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (await unlock($('#pwd').value)) { sessionStorage.setItem('ec:admin', '1'); start(); }
+    else $('#gateErr').classList.remove('hidden');
+  });
+  if (sessionStorage.getItem('ec:admin') === '1') start();
+
+  /* ---------- Schéma des contenus ---------- */
+  const SCHEMA = {
+    dashboard: null,
+    services: { label: 'Services', icon: 'fa-layer-group', title: 'title', fields: [
+      { k: 'title', label: 'Titre', req: true }, { k: 'slug', label: 'Identifiant (slug, sans espaces)', req: true }, { k: 'description', label: 'Description', type: 'textarea' },
+      { k: 'tags', label: 'Tags (séparés par des virgules)', type: 'list' }, { k: 'image', label: 'Image (ex. service-site-web.svg)' }, { k: 'active', label: 'Afficher sur le site', type: 'bool' }] },
+    robots: { label: 'Robots de trading', icon: 'fa-robot', title: 'title', fields: [
+      { k: 'title', label: 'Nom du robot', req: true }, { k: 'slug', label: 'Identifiant (slug)', req: true }, { k: 'summary', label: 'Résumé', type: 'textarea' }, { k: 'risk', label: 'Niveau de risque', type: 'select', options: ['Faible', 'Moyen', 'Élevé'] },
+      { k: 'price', label: 'Tarif affiché (ex. 150 USD) — vide = sur devis' }, { k: 'url', label: 'Lien d’achat (lien Chariow ou page du site)' }, { k: 'image', label: 'Image' }, { k: 'order', label: 'Ordre d’affichage', type: 'number' }, { k: 'active', label: 'Afficher sur le site', type: 'bool' }] },
+    payments: { label: 'Paiement', icon: 'fa-wallet', title: 'name', fields: [
+      { k: 'name', label: 'Nom du moyen (ex. MTN Mobile Money)', req: true }, { k: 'type', label: 'Type', type: 'select', options: ['Mobile Money', 'Crypto-monnaie', 'Virement bancaire', 'PayPal', 'Autre'] },
+      { k: 'country', label: 'Pays' }, { k: 'holder', label: 'Titulaire du compte' }, { k: 'account', label: 'Numéro, IBAN ou adresse' }, { k: 'network', label: 'Réseau (ex. BEP20, Ethereum) — crypto seulement' },
+      { k: 'instructions', label: 'Instructions', type: 'textarea' }, { k: 'order', label: 'Ordre', type: 'number' }, { k: 'active', label: 'Afficher sur le site', type: 'bool' }] },
+    trainings: { label: 'Formations', icon: 'fa-graduation-cap', title: 'title', fields: [
+      { k: 'title', label: 'Nom de la formation (suivi du domaine sur le site)', req: true }, { k: 'slug', label: 'Identifiant (slug)', req: true }, { k: 'serviceSlug', label: 'Service associé', type: 'service' },
+      { k: 'description', label: 'Description', type: 'textarea' }, { k: 'price', label: 'Tarif (ex. 25 USD)' }, { k: 'level', label: 'Niveau' }, { k: 'duration', label: 'Durée' }, { k: 'format', label: 'Format (ex. vidéo, en direct)' },
+      { k: 'image', label: 'Image' }, { k: 'url', label: 'Lien d’inscription (Chariow ou page du site)' }, { k: 'active', label: 'Afficher sur le site', type: 'bool' }] },
+    portfolio: { label: 'Réalisations', icon: 'fa-diagram-project', title: 'title', fields: [
+      { k: 'title', label: 'Titre du projet', req: true }, { k: 'status', label: 'Statut', type: 'select', options: [['done', 'Réalisé'], ['progress', 'En cours'], ['planned', 'À venir']] },
+      { k: 'year', label: 'Année', type: 'number' }, { k: 'description', label: 'Description', type: 'textarea' }, { k: 'tags', label: 'Technologies (séparées par des virgules)', type: 'list' },
+      { k: 'image', label: 'Image' }, { k: 'link', label: 'Lien du projet' }, { k: 'active', label: 'Afficher sur le site', type: 'bool' }] },
+    ads: { label: 'Publicités (bande)', icon: 'fa-bullhorn', title: 'title', fields: [
+      { k: 'title', label: 'Titre', req: true }, { k: 'type', label: 'Type', type: 'select', options: [['image', 'Image'], ['video', 'Vidéo (0 à 3 min)']] },
+      { k: 'src', label: 'Fichier image ou vidéo (chemin ou https://)', req: true }, { k: 'poster', label: 'Image de couverture (facultatif)' }, { k: 'link', label: 'Lien cliquable' },
+      { k: 'duration', label: 'Durée de la vidéo en secondes (0 à 180)', type: 'number' }, { k: 'start', label: 'Diffusion à partir du', type: 'datetime' }, { k: 'end', label: 'Retirée automatiquement le', type: 'datetime' },
+      { k: 'order', label: 'Ordre', type: 'number' }, { k: 'active', label: 'Activée', type: 'bool' }] },
+    marquee: { label: 'Bande d’annonces', icon: 'fa-bolt', title: 'text', fields: [
+      { k: 'text', label: 'Message', req: true }, { k: 'link', label: 'Lien (facultatif)' }, { k: 'order', label: 'Ordre', type: 'number' }, { k: 'active', label: 'Activée', type: 'bool' }] },
+    blog: { label: 'Blog (planification)', icon: 'fa-newspaper', title: 'title', fields: [
+      { k: 'title', label: 'Titre', req: true }, { k: 'slug', label: 'Identifiant (slug)', req: true }, { k: 'excerpt', label: 'Chapeau (résumé)', type: 'textarea' },
+      { k: 'category', label: 'Catégorie (ex. Web3, Fintech, IA)' }, { k: 'publishAt', label: 'Date de publication automatique', type: 'datetime', req: true }, { k: 'readMin', label: 'Temps de lecture (min)', type: 'number' },
+      { k: 'tags', label: 'Mots-clés (séparés par des virgules)', type: 'list' }, { k: 'body', label: 'Contenu (HTML : <p>, <h2>, <ul>…)', type: 'textarea', rows: 12 }, { k: 'active', label: 'Activé', type: 'bool' }] },
+    faq: { label: 'Questions fréquentes', icon: 'fa-circle-question', title: 'q', fields: [
+      { k: 'q', label: 'Question', req: true }, { k: 'a', label: 'Réponse', type: 'textarea', req: true }, { k: 'order', label: 'Ordre', type: 'number' }, { k: 'active', label: 'Afficher', type: 'bool' }] },
+    coverage: { label: 'Couverture (pays)', icon: 'fa-earth-africa', title: 'country', fields: [
+      { k: 'region', label: 'Région', req: true, type: 'select', options: ['Afrique de l’Ouest', 'Afrique centrale', 'Afrique du Nord', 'Afrique australe', 'Afrique de l’Est', 'Europe', 'Amérique du Nord', 'Amérique du Sud', 'Asie', 'Océanie'] },
+      { k: 'country', label: 'Pays', req: true }, { k: 'status', label: 'Statut', type: 'select', options: [['priority', 'Prioritaire'], ['covered', 'Desservi'], ['excluded', 'Non desservi (conflit ou sanctions)']] }] },
+    products: { label: 'Produits manuels', icon: 'fa-box-open', title: 'title', fields: [
+      { k: 'title', label: 'Nom du produit', req: true }, { k: 'slug', label: 'Identifiant (slug, lien boutique Chariow = origine/slug)', req: true }, { k: 'description', label: 'Description', type: 'textarea' },
+      { k: 'categories', label: 'Catégories : ia, scripts, formations (séparées par des virgules)', type: 'list' }, { k: 'price', label: 'Tarif (vide = sur devis)' }, { k: 'banner', label: 'Image bannière' }, { k: 'active', label: 'Afficher', type: 'bool' }] }
+  };
+  const COLL = { services: (x) => x, robots: 1, payments: 1, trainings: 1, portfolio: 1, ads: 1, marquee: 1, blog: 1, faq: 1, coverage: 1, products: 1 };
+  const getList = (key) => (key === 'coverage' ? D.coverage.items : key === 'products' ? D.products.manual : D[key]);
+  const setList = (key, arr) => { if (key === 'coverage') D.coverage.items = arr; else if (key === 'products') D.products.manual = arr; else D[key] = arr; };
+
+  /* ---------- États calculés ---------- */
+  function stateOf(x, key) {
+    if (x.active === false) return ['Désactivé', 'b-off'];
+    if (key === 'blog') { const p = ts(x.publishAt); if (p && p > now()) return ['Planifié', 'b-sch']; return ['Publié', 'b-on']; }
+    if (key === 'ads') { const s = ts(x.start), e = ts(x.end); if (e && now() >= e) return ['Expiré', 'b-exp']; if (s && now() < s) return ['Planifié', 'b-sch']; return ['En ligne', 'b-on']; }
+    return ['Actif', 'b-on'];
+  }
+
+  /* ---------- Navigation ---------- */
+  const SECTIONS = [['dashboard', 'Tableau de bord', 'fa-gauge-high'], ['services', 'Services', 'fa-layer-group'], ['robots', 'Robots de trading', 'fa-robot'], ['payments', 'Paiement', 'fa-wallet'], ['trainings', 'Formations', 'fa-graduation-cap'], ['portfolio', 'Réalisations', 'fa-diagram-project'], ['ads', 'Publicités', 'fa-bullhorn'], ['marquee', 'Bande d’annonces', 'fa-bolt'], ['blog', 'Blog & planning', 'fa-newspaper'], ['coverage', 'Couverture', 'fa-earth-africa'], ['faq', 'FAQ', 'fa-circle-question'], ['products', 'Produits manuels', 'fa-box-open'], ['settings', 'Réglages', 'fa-sliders']];
+  let current = 'dashboard';
+  function renderNav() {
+    const nav = $('#nav'); nav.replaceChildren();
+    SECTIONS.forEach(([k, label, icon]) => nav.append(h('button', { type: 'button', class: 'tab whitespace-nowrap' + (current === k ? ' on' : ''), onclick: () => { current = k; render(); } }, [ic('fa-solid ' + icon), label])));
+  }
+
+  /* ---------- Tableau de bord ---------- */
+  function dashboard() {
+    const ads = D.ads || [], blog = D.blog || [];
+    const liveAds = ads.filter((a) => a.active !== false && (!ts(a.start) || now() >= ts(a.start)) && (!ts(a.end) || now() < ts(a.end)));
+    const expired = ads.filter((a) => ts(a.end) && now() >= ts(a.end)).length;
+    const next = blog.filter((b) => b.active !== false && ts(b.publishAt) > now()).sort((a, b) => ts(a.publishAt) - ts(b.publishAt))[0];
+    const warn = [];
+    if (!D.settings.contact.whatsapp) warn.push('Aucun numéro WhatsApp renseigné.');
+    if (!D.settings.contact.email) warn.push('Aucun email renseigné.');
+    if (!D.settings.relayUrl) warn.push('Synchronisation Chariow : sans relais serveur, le site lit la boutique publique via des proxys (moins fiable).');
+    if (blog.length && !next) warn.push('Aucun article planifié : pensez à programmer le prochain article (30 jours).');
+    const card = (n, label, icon) => h('div', { class: 'panel rounded-2xl p-5' }, [h('div', { class: 'flex items-center justify-between' }, [h('p', { class: 'text-3xl font-extrabold text-white' }, String(n)), ic('fa-solid ' + icon + ' text-xl text-cyan-300')]), h('p', { class: 'mt-1 text-sm text-zinc-400' }, label)]);
+    return h('div', {}, [h('h1', { class: 'text-2xl font-bold text-white' }, 'Tableau de bord'), h('p', { class: 'mb-6 text-zinc-400' }, 'Pilotez l’ensemble du site depuis cette page.'),
+      h('div', { class: 'grid gap-4 sm:grid-cols-2 xl:grid-cols-4' }, [card(D.services.length, 'services', 'fa-layer-group'), card(liveAds.length, 'publicités en ligne', 'fa-bullhorn'), card(blog.filter((b) => ts(b.publishAt) <= now()).length, 'articles publiés', 'fa-newspaper'), card((D.coverage.items || []).filter((c) => c.status !== 'excluded').length, 'pays desservis', 'fa-earth-africa')]),
+      next ? h('div', { class: 'panel mt-6 rounded-2xl p-5' }, [h('p', { class: 'text-sm text-zinc-400' }, 'Prochaine publication du blog'), h('p', { class: 'mt-1 font-semibold text-white' }, next.title + ' — ' + new Date(ts(next.publishAt)).toLocaleString('fr-FR'))]) : null,
+      expired ? h('p', { class: 'mt-4 rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200' }, expired + ' publicité(s) expirée(s) : elles ne s’affichent plus sur le site. Supprimez-les ou renouvelez leur date.') : null,
+      warn.length ? h('div', { class: 'panel mt-6 rounded-2xl p-5' }, [h('p', { class: 'mb-2 font-semibold text-white' }, 'À vérifier'), h('ul', { class: 'list-disc space-y-1 ps-5 text-sm text-zinc-300' }, warn.map((w) => h('li', {}, w)))]) : null]);
+  }
+
+  /* ---------- Éditeur de liste générique ---------- */
+  function listView(key) {
+    const sc = SCHEMA[key], items = getList(key).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+    const titleOf = (x) => x[sc.title] || x.slug || x.country || '(sans titre)';
+    const addBtn = h('button', { type: 'button', class: 'btn btn-p', onclick: () => openForm(key, null) }, [ic('fa-solid fa-plus'), 'Ajouter']);
+    const extra = key === 'blog' ? h('button', { type: 'button', class: 'btn btn-g', title: 'Planifier à J+30 après le dernier article', onclick: () => { const all = (D.blog || []).map((b) => ts(b.publishAt)).filter(Boolean); const base = all.length ? Math.max(...all) : now(); const d = new Date(base + 30 * 86400000); const v = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16) + ':00'; openForm('blog', null, { publishAt: v }); } }, [ic('fa-solid fa-calendar-plus'), 'Planifier à J+30']) : null;
+    const rows = items.map((x, idx) => {
+      const [label, cls] = stateOf(x, key);
+      const meta = key === 'ads' ? (x.type || 'image') + (x.start ? ' · dès ' + x.start.replace('T', ' ') : '') + (x.end ? ' · jusqu’au ' + x.end.replace('T', ' ') : '') : key === 'blog' ? (x.publishAt || '').replace('T', ' ') : key === 'coverage' ? x.region + ' · ' + x.status : key === 'faq' ? (x.a || '').slice(0, 80) : (x.price || x.status || x.type || x.level || '') ;
+      const act = (icon, title, fn) => h('button', { type: 'button', class: 'rounded-md border border-white/10 px-2 py-1 text-zinc-300 hover:border-cyan-400/50 hover:text-cyan-300', title, 'aria-label': title, onclick: fn }, [ic('fa-solid ' + icon)]);
+      return h('tr', { class: 'border-t border-white/5' }, [
+        h('td', { class: 'p-3 font-medium text-white' }, titleOf(x)),
+        h('td', { class: 'p-3 text-sm text-zinc-400' }, meta),
+        h('td', { class: 'p-3' }, h('span', { class: 'badge ' + cls }, label)),
+        h('td', { class: 'p-3' }, h('div', { class: 'flex flex-wrap justify-end gap-1.5' }, [
+          act(x.active === false ? 'fa-eye' : 'fa-eye-slash', x.active === false ? 'Activer' : 'Désactiver', () => { x.active = x.active === false; touch(); }),
+          act('fa-arrow-up', 'Monter', () => moveItem(key, idx, -1)), act('fa-arrow-down', 'Descendre', () => moveItem(key, idx, 1)),
+          act('fa-pen', 'Modifier', () => openForm(key, x)), act('fa-copy', 'Dupliquer', () => duplicate(key, x)),
+          act('fa-trash', 'Supprimer', () => remove(key, x))]))]);
+    });
+    return h('div', {}, [h('div', { class: 'mb-6 flex flex-wrap items-center justify-between gap-3' }, [h('div', {}, [h('h1', { class: 'text-2xl font-bold text-white' }, sc.label), h('p', { class: 'text-sm text-zinc-400' }, items.length + ' élément(s)')]), h('div', { class: 'flex flex-wrap gap-2' }, [extra, addBtn])]),
+      h('div', { class: 'panel overflow-x-auto rounded-2xl' }, [h('table', { class: 'w-full min-w-[640px] text-start text-sm' }, [h('thead', { class: 'text-zinc-500' }, [h('tr', {}, [h('th', { class: 'p-3 text-start font-medium' }, 'Nom'), h('th', { class: 'p-3 text-start font-medium' }, 'Détail'), h('th', { class: 'p-3 text-start font-medium' }, 'Statut'), h('th', { class: 'p-3 text-end font-medium' }, 'Actions')])]), h('tbody', {}, rows.length ? rows : [h('tr', {}, h('td', { colspan: '4', class: 'p-6 text-center text-zinc-500' }, 'Aucun élément. Cliquez sur « Ajouter ».'))])])])]);
+  }
+  function touch() { save(); render(); notice('Modification enregistrée dans le brouillon.'); }
+  function moveItem(key, idx, dir) {
+    const arr = getList(key).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+    const j = idx + dir; if (j < 0 || j >= arr.length) return;
+    const oa = arr[idx].order || idx + 1, ob = arr[j].order || j + 1; arr[idx].order = ob; arr[j].order = oa;
+    setList(key, arr); save(); render();
+  }
+  function duplicate(key, x) { const c = JSON.parse(JSON.stringify(x)); c.title && (c.title += ' (copie)'); if (c.slug) c.slug += '-copie-' + uid(); if (c.q) c.q += ' (copie)'; c.order = (getList(key).length + 1); getList(key).push(c); save(); render(); notice('Élément dupliqué.'); }
+  function remove(key, x) { if (!window.confirm('Supprimer définitivement cet élément ?')) return; setList(key, getList(key).filter((y) => y !== x)); save(); render(); notice('Élément supprimé.'); }
+
+  /* ---------- Formulaire modal ---------- */
+  function openForm(key, item, prefill) {
+    const sc = SCHEMA[key], isNew = !item;
+    const base = item ? JSON.parse(JSON.stringify(item)) : Object.assign({ active: true, order: getList(key).length + 1 }, prefill || {});
+    if (key === 'blog' && isNew && !base.publishAt) base.publishAt = new Date().toISOString().slice(0, 16) + ':00';
+    const inputs = {}; const errors = h('p', { class: 'hidden text-sm text-rose-300', role: 'alert' });
+    const fieldNode = (f) => {
+      const v = base[f.k];
+      const id = 'f-' + f.k;
+      let node;
+      if (f.type === 'bool') node = h('label', { class: 'flex items-center gap-3 text-sm text-zinc-200' }, [h('input', { type: 'checkbox', id, class: 'h-4 w-4 accent-cyan-400', ...(v !== false ? { checked: true } : {}) }), f.label]);
+      else {
+        if (f.type === 'textarea') node = h('textarea', { id, class: 'field', rows: f.rows || 4 }, esc(v));
+        else if (f.type === 'select') node = h('select', { id, class: 'field' }, [h('option', { value: '' }, '—')].concat((f.options || []).map((o) => { const [val, lab] = Array.isArray(o) ? o : [o, o]; return h('option', { value: val, selected: String(v) === String(val) ? true : null }, lab); })));
+        else if (f.type === 'service') node = h('select', { id, class: 'field' }, [h('option', { value: '' }, '— aucun —')].concat(D.services.map((s) => h('option', { value: s.slug, selected: v === s.slug ? true : null }, s.title))));
+        else if (f.type === 'number') node = h('input', { id, type: 'number', class: 'field', value: v == null ? '' : String(v), min: '0', step: 'any' });
+        else if (f.type === 'datetime') node = h('input', { id, type: 'datetime-local', class: 'field', value: v ? String(v).slice(0, 16) : '' });
+        else if (f.type === 'list') node = h('input', { id, class: 'field', value: Array.isArray(v) ? v.join(', ') : esc(v) });
+        else node = h('input', { id, class: 'field', value: esc(v), dir: /url|src|link|poster|image|banner|account/i.test(f.k) ? 'ltr' : null });
+      }
+      inputs[f.k] = { f, node };
+      return f.type === 'bool' ? node : h('div', {}, [h('label', { for: id, class: 'mb-1.5 block text-sm text-zinc-300' }, f.label + (f.req ? ' *' : '')), node]);
+    };
+    const form = h('form', { class: 'grid gap-4 sm:grid-cols-2', novalidate: true }, sc.fields.map((f) => h('div', { class: f.type === 'textarea' || f.k === 'body' || f.k === 'description' ? 'sm:col-span-2' : '' }, [fieldNode(f)])).concat([h('div', { class: 'sm:col-span-2' }, errors)]));
+    const collect = () => {
+      const out = Object.assign({}, base);
+      for (const [k, { f, node }] of Object.entries(inputs)) {
+        if (f.type === 'bool') out[k] = node.querySelector('input').checked;
+        else {
+          const raw = node.tagName ? node.value : '';
+          if (f.type === 'number') out[k] = raw === '' ? undefined : Number(raw);
+          else if (f.type === 'datetime') out[k] = raw ? raw + (raw.length === 16 ? ':00' : '') : undefined;
+          else if (f.type === 'list') out[k] = raw.split(',').map((x) => x.trim()).filter(Boolean);
+          else out[k] = raw.trim() === '' ? undefined : raw.trim();
+        }
+      }
+      if (key === 'coverage' && out.country) out.country = out.country.replace(/\s+/g, ' ');
+      return out;
+    };
+    const validate = (o) => {
+      for (const f of sc.fields) if (f.req && (o[f.k] === undefined || o[f.k] === '')) return 'Le champ « ' + f.label + ' » est obligatoire.';
+      if (key === 'ads' && o.type === 'video' && (Number(o.duration) > 180 || Number(o.duration) <= 0)) return 'Une vidéo publicitaire doit durer entre 1 seconde et 3 minutes (180 s).';
+      if (key === 'ads' && o.start && o.end && ts(o.end) <= ts(o.start)) return 'La date de fin doit être postérieure à la date de début.';
+      if (key === 'blog' && !/^[a-z0-9-]+$/.test(o.slug || '')) return 'L’identifiant doit contenir uniquement des minuscules, chiffres et tirets.';
+      if (['services', 'blog', 'robots', 'trainings', 'products'].includes(key) && o.slug && !/^[a-z0-9-]+$/i.test(o.slug)) return 'L’identifiant ne doit contenir ni espaces ni caractères spéciaux.';
+      return '';
+    };
+    const save_ = () => {
+      const o = collect(); const err = validate(o);
+      if (err) { errors.textContent = err; errors.classList.remove('hidden'); return; }
+      const arr = getList(key);
+      if (isNew) arr.push(o); else { const i = arr.indexOf(item); if (i >= 0) arr[i] = o; }
+      setList(key, arr); save(); close(); render(); notice(isNew ? 'Ajouté. Pensez à télécharger data.js pour publier.' : 'Modifications enregistrées.');
+    };
+    const close = () => $('#modalRoot').replaceChildren();
+    const box = h('div', { class: 'panel my-8 w-full max-w-2xl rounded-2xl p-6', role: 'dialog', 'aria-modal': 'true', 'aria-label': (isNew ? 'Ajouter' : 'Modifier') + ' — ' + sc.label }, [
+      h('div', { class: 'mb-5 flex items-center justify-between' }, [h('h2', { class: 'text-lg font-semibold text-white' }, (isNew ? 'Ajouter : ' : 'Modifier : ') + sc.label), h('button', { type: 'button', class: 'text-zinc-400 hover:text-white', 'aria-label': 'Fermer', onclick: close }, [ic('fa-solid fa-xmark')])]),
+      form, h('div', { class: 'mt-6 flex flex-wrap justify-end gap-2' }, [h('button', { type: 'button', class: 'btn btn-g', onclick: close }, 'Annuler'), h('button', { type: 'button', class: 'btn btn-p', onclick: save_ }, [ic('fa-solid fa-floppy-disk'), 'Enregistrer'])])]);
+    $('#modalRoot').replaceChildren(h('div', { class: 'modal', onclick: (e) => { if (e.target.classList.contains('modal')) close(); } }, [box]));
+    const first = form.querySelector('input,textarea,select'); if (first) first.focus();
+  }
+
+  /* ---------- Réglages ---------- */
+  function settingsView() {
+    const S = D.settings;
+    const f = (label, get, set, type) => { const id = 'set-' + label.replace(/\W+/g, '-'); const val = get(); const node = type === 'bool' ? h('input', { type: 'checkbox', id, class: 'h-4 w-4 accent-cyan-400', checked: val !== false ? true : null }) : type === 'area' ? h('textarea', { id, class: 'field', rows: 3 }, esc(val)) : h('input', { id, class: 'field', value: esc(val), dir: 'ltr' }); node.addEventListener('change', () => { set(type === 'bool' ? node.checked : node.value); save(); notice('Réglage mis à jour.'); }); node.addEventListener('input', () => { if (type !== 'bool') set(node.value); }); return h('div', { class: type === 'area' ? 'sm:col-span-2' : '' }, type === 'bool' ? h('label', { class: 'flex items-center gap-3 text-sm text-zinc-200' }, [node, label]) : [h('label', { for: id, class: 'mb-1.5 block text-sm text-zinc-300' }, label), node]); };
+    const booking = JSON.stringify(D.booking, null, 2);
+    const bookingBox = h('textarea', { class: 'field font-mono text-xs', rows: 12, dir: 'ltr' }, booking);
+    const bookingErr = h('p', { class: 'hidden text-sm text-rose-300' });
+    bookingBox.addEventListener('change', () => { try { D.booking = JSON.parse(bookingBox.value); bookingErr.classList.add('hidden'); save(); notice('Planning de rendez-vous mis à jour.'); } catch (e) { bookingErr.textContent = 'JSON invalide : ' + e.message; bookingErr.classList.remove('hidden'); } });
+    return h('div', {}, [h('h1', { class: 'mb-6 text-2xl font-bold text-white' }, 'Réglages du site'),
+      h('div', { class: 'panel mb-6 rounded-2xl p-6' }, [h('h2', { class: 'mb-4 font-semibold text-white' }, 'Identité et contact'), h('div', { class: 'grid gap-4 sm:grid-cols-2' }, [
+        f('Nom de la marque', () => S.brand, (v) => { S.brand = v; }), f('Adresse publique du site (https://…)', () => S.siteUrl, (v) => { S.siteUrl = v; }),
+        f('WhatsApp (indicatif + numéro, sans +)', () => S.contact.whatsapp, (v) => { S.contact.whatsapp = v.replace(/\D/g, ''); }), f('Email', () => S.contact.email, (v) => { S.contact.email = v; }),
+        f('TikTok (lien)', () => S.contact.tiktok, (v) => { S.contact.tiktok = v; }), f('GitHub (lien)', () => S.contact.github, (v) => { S.contact.github = v; }), f('LinkedIn (lien)', () => S.contact.linkedin, (v) => { S.contact.linkedin = v; }),
+        f('Boutique Chariow (origine)', () => S.store.origin, (v) => { S.store.origin = v; }),
+        f('Description par défaut (SEO)', () => S.seo.defaultDescription, (v) => { S.seo.defaultDescription = v; }, 'area'),
+        f('Note affichée sur la page Paiement', () => S.paymentNotice, (v) => { S.paymentNotice = v; }, 'area')])]),
+      h('div', { class: 'panel mb-6 rounded-2xl p-6' }, [h('h2', { class: 'mb-4 font-semibold text-white' }, 'Synchronisation Chariow'), h('p', { class: 'mb-4 text-sm leading-relaxed text-zinc-400' }, 'Le site lit votre boutique publique. Pour une synchronisation fiable, indiquez ici l’adresse d’un petit relais serveur (ex. un fichier PHP sur Hostinger) qui appelle l’API Chariow avec votre clé. La clé API ne doit jamais être écrite dans ce fichier public.'), h('div', { class: 'grid gap-4' }, [f('Adresse du relais serveur (facultatif)', () => S.relayUrl, (v) => { S.relayUrl = v; })])]),
+      h('div', { class: 'panel mb-6 rounded-2xl p-6' }, [h('h2', { class: 'mb-4 font-semibold text-white' }, 'Modules du site'), h('div', { class: 'grid gap-3 sm:grid-cols-2' }, Object.entries({ ads: 'Bande publicitaire', marquee: 'Bande d’annonces', blog: 'Blog', booking: 'Rendez-vous', coverage: 'Couverture', robots: 'Robots de trading', payments: 'Paiement' }).map(([k, l]) => f(l, () => (S.features || {})[k], (v) => { S.features = S.features || {}; S.features[k] = v; }, 'bool')))]),
+      h('div', { class: 'panel mb-6 rounded-2xl p-6' }, [h('h2', { class: 'mb-4 font-semibold text-white' }, 'Mentions légales'), h('div', { class: 'grid gap-4 sm:grid-cols-2' }, [f('Société', () => D.legal.company, (v) => { D.legal.company = v; }), f('Immatriculation', () => D.legal.registration, (v) => { D.legal.registration = v; }), f('Adresse', () => D.legal.address, (v) => { D.legal.address = v; }, 'area'), f('Hébergeur', () => D.legal.host, (v) => { D.legal.host = v; }, 'area')])]),
+      h('div', { class: 'panel mb-6 rounded-2xl p-6' }, [h('h2', { class: 'mb-2 font-semibold text-white' }, 'Planning des rendez-vous (avancé)'), h('p', { class: 'mb-3 text-sm text-zinc-400' }, 'Jours (0 = dimanche … 6 = samedi), plages horaires en heure du propriétaire, jours bloqués (AAAA-MM-JJ).'), bookingBox, bookingErr])]);
+  }
+
+  /* ---------- Rendu principal ---------- */
+  function render() {
+    renderNav();
+    const v = $('#view');
+    if (current === 'dashboard') v.replaceChildren(dashboard());
+    else if (current === 'settings') v.replaceChildren(settingsView());
+    else v.replaceChildren(listView(current));
+  }
+  function start() {
+    $('#gate').classList.add('hidden'); $('#app').classList.remove('hidden');
+    render();
+  }
+
+  /* ---------- Export, aperçu, annulation ---------- */
+  function exportData() {
+    const text = '/* EMPIRE CODE HUB — données du site. Généré le ' + new Date().toLocaleString('fr-FR') + ' */\nwindow.EMPIRE_DATA = ' + JSON.stringify(D, null, 2) + ';\n';
+    const a = h('a', { href: URL.createObjectURL(new Blob([text], { type: 'text/javascript;charset=utf-8' })), download: 'data.js' });
+    document.body.append(a); a.click(); a.remove();
+    notice('data.js téléchargé. Remplacez le fichier data.js à la racine de votre site, puis actualisez la page.');
+  }
+  function preview() {
+    try { localStorage.setItem('ec:draft', JSON.stringify(D)); window.open('index.html?preview=1', '_blank', 'noopener'); } catch (e) { notice('Aperçu indisponible : ' + e.message); }
+  }
+  function resetAll() { if (!window.confirm('Annuler toutes les modifications non téléchargées ?')) return; D = JSON.parse(JSON.stringify(ORIGINAL)); save(); render(); notice('Brouillon réinitialisé.'); }
+  ['#btnExport', '#btnExport2'].forEach((s) => $(s).addEventListener('click', exportData));
+  ['#btnPreview', '#btnPreview2'].forEach((s) => $(s).addEventListener('click', preview));
+  $('#btnReset').addEventListener('click', resetAll);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('#modalRoot').replaceChildren(); });
+})();
+</script>
+</body>
+</html>
