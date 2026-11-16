@@ -17,6 +17,8 @@
   const PAGE = document.body.dataset.page || 'home';
   const FEAT = (k) => (S.features || {})[k] !== false;
 
+  /* Remplace le contenu d'un élément en ignorant les valeurs vides (sinon « null » s'affiche) */
+  const setKids = (el, ...kids) => el.replaceChildren(...kids.filter((k) => k !== null && k !== undefined && k !== false));
   /* ---------- Langue ---------- */
   function detectLang() {
     try { const s = localStorage.getItem('ec:lang'); if (s && DICT[s]) return s; } catch (_) { /* ignoré */ }
@@ -363,7 +365,7 @@
       h('div', 'lg:col-span-5', [h('h2', 'text-3xl font-bold tracking-tight text-white sm:text-4xl', t('Demande de partenariat')), h('p', 'mt-3 max-w-md text-zinc-400', t('Vous développez, travaillez en freelance, entreprenez ou investissez ? Présentez-nous votre projet en quelques lignes, puis choisissez comment nous l\'envoyer.')),
         h('ul', 'mt-8 space-y-5', [['fa-laptop-code', 'Développeurs informatiques', 'Collaborer sur des scripts, des outils et des formations.'], ['fa-briefcase', 'Freelances', 'Unir vos compétences aux nôtres sur des projets concrets.'], ['fa-lightbulb', 'Entrepreneurs', 'Transformer une idée en solution numérique concrète.'], ['fa-chart-line', 'Investisseurs', 'Participer à la croissance d\'EMPIRE CODE HUB.'], ['fa-building', 'Entreprises et agences', 'Intégrer nos solutions à vos propres projets.']].map(([ico, title, txt]) => h('li', 'flex gap-4', [h('span', 'grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-cyan-400/30 bg-cyan-400/10 text-cyan-300', [ic('fa-solid ' + ico)]), h('div', {}, [h('h3', 'font-semibold text-white', t(title)), h('p', 'mt-1 text-sm leading-relaxed text-zinc-400', t(txt))])])))]),
       h('div', 'lg:col-span-7', [partnershipBlock()])])]);
-    main.replaceChildren(hero, services, prod, robots, cov, latestPosts(3), partner, faqBlock(5), ctaBand());
+    setKids(main, hero, services, prod, robots, cov, latestPosts(3), partner, faqBlock(5), ctaBand());
     startTerminal();
     productsMountRender();
     setSEO({ title: S.brand + ' — Scripts Node.js premium, outils HTML hors ligne & formations IA', description: (S.seo || {}).defaultDescription, path: 'index.html', jsonld: [orgLd(), faqLd()] });
@@ -374,14 +376,14 @@
     const st = $('#syncStatus'); if (st) st.textContent = syncLabel();
   }
   function renderServices(main) {
-    main.replaceChildren(pageHeader(t('Nos services'), t('Du site web à la blockchain : chaque projet est conçu, testé et livré avec sa documentation.'), [t('Services')]), section('py-12', [h('div', 'grid gap-5 sm:grid-cols-2 xl:grid-cols-3', sorted(D.services).map(serviceCard))]), faqBlock(8), ctaBand());
+    setKids(main, pageHeader(t('Nos services'), t('Du site web à la blockchain : chaque projet est conçu, testé et livré avec sa documentation.'), [t('Services')]), section('py-12', [h('div', 'grid gap-5 sm:grid-cols-2 xl:grid-cols-3', sorted(D.services).map(serviceCard))]), faqBlock(8), ctaBand());
     setSEO({ title: t('Services'), description: t('Du site web à la blockchain : chaque projet est conçu, testé et livré avec sa documentation.'), path: 'services.html', jsonld: [orgLd()] });
   }
   function renderFormations(main) {
     const list = catalog.filter((p) => (p.categories || []).includes('formations')).concat(sorted(D.trainings).map((x) => ({ slug: x.slug, title: x.title, description: x.description, price: x.price, banner: safeImg(x.image), serviceSlug: x.serviceSlug, manual: true })));
     const svcTitle = (slug) => { const s = D.services.find((v) => v.slug === slug); return s ? svcText(s, 'title') : t('Autres formations'); };
     const groups = {}; list.forEach((x) => { const k = x.serviceSlug || 'autres'; (groups[k] = groups[k] || []).push(x); });
-    main.replaceChildren(pageHeader(t('Formations'), t('Une formation pour chaque service. Les formations publiées dans la boutique apparaissent ici, avec leur tarif.'), [t('Formations')]),
+    setKids(main, pageHeader(t('Formations'), t('Une formation pour chaque service. Les formations publiées dans la boutique apparaissent ici, avec leur tarif.'), [t('Formations')]),
       section('py-12', list.length ? Object.keys(groups).map((k) => h('div', 'mb-12', [h('h2', 'mb-5 text-xl font-bold text-white', svcTitle(k)), h('div', 'grid gap-5 sm:grid-cols-2 xl:grid-cols-3', groups[k].map(productCard))])) : [h('div', 'rounded-2xl border border-dashed border-white/15 p-10 text-center', [ic('fa-solid fa-graduation-cap text-4xl text-cyan-300'), h('h2', 'mt-4 text-xl font-semibold text-white', t('Les formations arrivent bientôt')), h('p', 'mt-2 text-zinc-400', t('Chaque nouvelle formation publiée dans la boutique apparaît ici automatiquement.'))])]),
       ctaBand());
     setSEO({ title: t('Formations'), description: t('Une formation pour chaque service. Les formations publiées dans la boutique apparaissent ici, avec leur tarif.'), path: 'formations.html' });
@@ -389,7 +391,7 @@
   function renderRobots(main) {
     const list = sorted(D.robots);
     const riskKey = { Faible: 'Faible', Moyen: 'Moyen', 'Élevé': 'Élevé' };
-    main.replaceChildren(pageHeader(t('Robots de trading'), t('Bots de trading et d’arbitrage sur mesure : stratégie, gestion du risque, backtests et alertes. Code source livré et documenté.'), [t('Robots de trading')]),
+    setKids(main, pageHeader(t('Robots de trading'), t('Bots de trading et d’arbitrage sur mesure : stratégie, gestion du risque, backtests et alertes. Code source livré et documenté.'), [t('Robots de trading')]),
       section('pt-10', [h('div', 'flex gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100', [ic('fa-solid fa-triangle-exclamation mt-0.5 text-amber-300'), h('p', {}, t('Avertissement : le trading comporte un risque de perte en capital. Aucun robot ne garantit de gains. Nos solutions automatisent une stratégie que vous définissez ; elles ne constituent pas un conseil en investissement.'))])]),
       section('py-10', [list.length ? h('div', 'grid gap-5 sm:grid-cols-2 xl:grid-cols-3', list.map((r) => h('article', 'flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-panel', [r.image ? h('img', { src: safeImg(r.image), alt: r.title, loading: 'lazy', class: 'aspect-[16/10] w-full object-cover' }) : null, h('div', 'flex flex-1 flex-col p-5', [h('h3', 'text-lg font-semibold text-white', r.title), h('p', 'mt-2 text-sm text-zinc-400', r.summary), h('span', 'mt-3 w-fit rounded-full border border-white/10 px-2.5 py-0.5 text-xs text-zinc-300', t('Risque') + ' : ' + t(riskKey[r.risk] || 'Moyen')), h('div', 'mt-auto flex items-center justify-between pt-5', [h('span', 'font-bold text-cyan-300', r.price || t('Sur devis')), r.url ? h('a', { href: safeUrl(r.url), class: 'btn-primary !px-4 !py-2 text-sm' }, t('Acheter maintenant')) : h('a', { href: linkTo('rendez-vous.html?sujet=robot'), class: 'btn-primary !px-4 !py-2 text-sm' }, t('Demander un devis'))])])]))) : h('p', 'text-zinc-400', t('Les modèles de robots seront publiés ici prochainement.'))]),
       ctaBand());
@@ -407,12 +409,12 @@
     ]);
     const TYPE_ORDER = ['Virement bancaire', 'Crypto-monnaie', 'Mobile Money'];
     const keys = Object.keys(groups).sort((a, b) => (TYPE_ORDER.indexOf(a) < 0 ? 99 : TYPE_ORDER.indexOf(a)) - (TYPE_ORDER.indexOf(b) < 0 ? 99 : TYPE_ORDER.indexOf(b)));
-    main.replaceChildren(
+    setKids(main, 
       pageHeader(t('Coordonnées de paiement'), t('Voici l’ensemble de mes coordonnées de paiement, disponibles pour toute prestation de développement, de documentation ou de conseil en intelligence artificielle. Vous pouvez choisir librement le moyen qui vous convient le mieux.'), [t('Paiement')]),
       section('pt-10', [h('div', 'flex gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100', [ic('fa-solid fa-shield-halved mt-0.5 text-amber-300'), h('p', {}, t('Ne payez que vers les coordonnées affichées sur cette page. En cas de doute, contactez-nous avant de payer. Nous ne demandons jamais votre phrase secrète ni vos clés privées.'))]),
         h('div', 'mt-6 grid gap-3 sm:grid-cols-3', [h('div', 'rounded-2xl border border-cyan-400/30 bg-cyan-400/5 p-5 sm:col-span-3', [h('p', 'flex items-center gap-2 font-semibold text-white', [ic('fa-solid fa-lock text-cyan-300'), t('Paiement sécurisé via Chariow')]), h('p', 'mt-2 text-sm text-zinc-300', t('Les paiements par carte et Mobile Money sont traités par Chariow. Votre achat est livré automatiquement après paiement.')), h('a', { href: STORE, target: '_blank', rel: 'noopener', class: 'btn-primary mt-4 inline-flex' }, [ic('fa-solid fa-cart-shopping'), t('Aller à la boutique')])])])]),
       ...keys.map((k) => section('py-8', [h('h2', 'mb-5 text-xl font-bold text-white', t(k)), h('div', 'grid gap-5 md:grid-cols-2 xl:grid-cols-3', groups[k].map(card))])),
-      methods.length ? null : section('py-8', [h('p', 'text-zinc-400', t('Aucun autre moyen de paiement n’est affiché pour le moment. Utilisez la boutique sécurisée ou contactez-nous.'))]),
+      methods.length ? document.createComment('') : section('py-8', [h('p', 'text-zinc-400', t('Aucun autre moyen de paiement n’est affiché pour le moment. Utilisez la boutique sécurisée ou contactez-nous.'))]),
       section('py-10', [h('div', 'text-center', [h('p', 'font-semibold text-white', t('Une question avant de payer ?')), h('div', 'mt-5 flex flex-wrap justify-center gap-3', [h('a', { href: 'https://wa.me/' + WA, target: '_blank', rel: 'noopener', class: 'btn-wa' }, [ic('fa-brands fa-whatsapp'), 'WhatsApp']), h('a', { href: 'mailto:' + MAIL, class: 'btn-ghost' }, [ic('fa-solid fa-envelope'), t('Email')])])])]),
       ctaBand()
     );
@@ -430,7 +432,7 @@
       $$('button', bar).forEach((b) => { const on = b.dataset.t === tab; b.setAttribute('aria-pressed', String(on)); b.className = 'rounded-full border px-4 py-2 text-sm ' + (on ? 'border-cyan-400 bg-cyan-500 text-black' : 'border-white/15 text-zinc-300'); });
     };
     Object.keys(labels).forEach((k) => bar.append(h('button', { type: 'button', 'data-t': k, onclick: () => { tab = k; draw(); } }, labels[k])));
-    main.replaceChildren(pageHeader(t('Réalisations et projets'), t('Ce que nous avons livré, ce que nous construisons et ce qui arrive.'), [t('Réalisations')]), section('py-12', [bar, grid]), ctaBand());
+    setKids(main, pageHeader(t('Réalisations et projets'), t('Ce que nous avons livré, ce que nous construisons et ce qui arrive.'), [t('Réalisations')]), section('py-12', [bar, grid]), ctaBand());
     draw();
     setSEO({ title: t('Réalisations et projets'), description: t('Ce que nous avons livré, ce que nous construisons et ce qui arrive.'), path: 'realisations.html' });
   }
@@ -445,7 +447,7 @@
     const LBL = { priority: t('Prioritaire'), covered: t('Desservi'), excluded: t('Non desservi') };
     const CLS = { priority: 'border-cyan-400/50 text-cyan-300', covered: 'border-blue-400/40 text-blue-300', excluded: 'border-zinc-700 text-zinc-500 line-through' };
     const legend = h('div', 'mb-6 flex flex-wrap gap-4 text-sm text-zinc-300', [['bg-cyan-400', 'priority'], ['bg-blue-500', 'covered'], ['bg-zinc-600', 'excluded']].map(([c, k]) => h('span', 'flex items-center gap-2', [h('span', 'h-3 w-3 rounded-full ' + c), LBL[k]])));
-    main.replaceChildren(pageHeader(t('Couverture mondiale'), t('Clients sur les six continents, avec une priorité pour l’Afrique de l’Ouest, l’Europe, l’Amérique du Nord et l’Asie-Pacifique.'), [t('Couverture')]),
+    setKids(main, pageHeader(t('Couverture mondiale'), t('Clients sur les six continents, avec une priorité pour l’Afrique de l’Ouest, l’Europe, l’Amérique du Nord et l’Asie-Pacifique.'), [t('Couverture')]),
       section('pt-10', [h('div', 'grid gap-4 sm:grid-cols-4', [stat(items.filter((i) => i.status === 'priority').length, t('pays prioritaires')), stat(items.filter((i) => i.status === 'covered').length, t('pays desservis')), stat(regions.length, t('régions')), stat(items.filter((i) => i.status === 'excluded').length, t('Non desservi'))])]),
       section('py-10', [tabs, mapBox, h('div', 'mt-6', legend), ...regions.map((r) => h('div', 'mb-8', [h('h2', 'mb-3 text-lg font-semibold text-white', t(r) === r ? r : t(r)), h('div', 'flex flex-wrap gap-2', items.filter((i) => i.region === r).map((i) => h('span', { class: 'rounded-full border bg-black/30 px-3 py-1 text-sm ' + (CLS[i.status] || '') }, i.country + (i.status ? ' · ' + LBL[i.status] : ''))))])), h('p', 'mt-6 rounded-xl border border-white/10 bg-panel p-4 text-sm text-zinc-400', t('Certains pays sont exclus pour cause de conflit armé ou de sanctions internationales. Liste revue régulièrement.') + (D.coverage.note ? ' ' + D.coverage.note : ''))]),
       ctaBand());
@@ -509,7 +511,7 @@
     const body = h('div', 'grid gap-8 lg:grid-cols-2', [
       h('div', {}, [h('h2', 'mb-4 text-lg font-semibold text-white', t('1. Choisissez un jour')), days.length ? dayList : h('p', 'text-zinc-400', t('Aucun créneau disponible pour le moment.'))]),
       h('div', {}, [h('h2', 'mb-4 text-lg font-semibold text-white', t('2. Choisissez une heure')), timeBox])]);
-    main.replaceChildren(pageHeader(t('Prendre rendez-vous'), t('Réservez un créneau pour parler de votre projet : site, application, blockchain, robot de trading ou formation.'), [t('Rendez-vous')]),
+    setKids(main, pageHeader(t('Prendre rendez-vous'), t('Réservez un créneau pour parler de votre projet : site, application, blockchain, robot de trading ou formation.'), [t('Rendez-vous')]),
       section('py-12', [sujet ? h('p', 'mb-6 rounded-xl border border-cyan-400/30 bg-cyan-400/5 px-4 py-3 text-sm text-cyan-200', t('Demande de devis') + ' — ' + sujet) : null, body]),
       section('pb-16', [heading(t('Nos contacts')), h('div', 'grid gap-3 sm:grid-cols-2 lg:grid-cols-4', [['WhatsApp', '+' + WA, 'https://wa.me/' + WA], [t('Email'), MAIL, 'mailto:' + MAIL], ['TikTok', '@donkodeutsch', C.tiktok], ['GitHub', 'Donko-dev', C.github]].filter((c) => c[2]).map(([l, v, u]) => h('a', { href: u, target: /^https?:/.test(u) ? '_blank' : null, rel: 'noopener', class: 'rounded-2xl border border-white/10 bg-panel p-4 transition hover:border-cyan-400/40' }, [h('span', 'block text-xs text-zinc-500', l), h('span', 'block truncate font-semibold text-white', v)])))]));
     setSEO({ title: t('Prendre rendez-vous'), description: t('Réservez un créneau pour parler de votre projet : site, application, blockchain, robot de trading ou formation.'), path: 'rendez-vous.html' });
@@ -517,7 +519,7 @@
   function renderBlog(main) {
     const posts = (D.blog || []).filter((p) => p.active !== false && ts(p.publishAt) <= now()).sort((a, b) => ts(b.publishAt) - ts(a.publishAt));
     const next = (D.blog || []).filter((p) => p.active !== false && ts(p.publishAt) > now()).sort((a, b) => ts(a.publishAt) - ts(b.publishAt))[0];
-    main.replaceChildren(pageHeader(t('Blog tech & innovation'), t('Informatique, Web3, fintech : un nouvel article est publié automatiquement tous les 30 jours.'), [t('Blog')]),
+    setKids(main, pageHeader(t('Blog tech & innovation'), t('Informatique, Web3, fintech : un nouvel article est publié automatiquement tous les 30 jours.'), [t('Blog')]),
       section('py-12', [posts.length ? h('div', 'grid gap-5 sm:grid-cols-2 xl:grid-cols-3', posts.map(postCard)) : h('p', 'text-zinc-400', t('Aucun article pour le moment.')), next ? h('p', 'mt-10 rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-4 text-sm text-zinc-300', t('Prochain article prévu le {date}.', { date: fmtDate(next.publishAt) })) : null]), ctaBand());
     setSEO({ title: t('Blog tech & innovation'), description: t('Informatique, Web3, fintech : un nouvel article est publié automatiquement tous les 30 jours.'), path: 'blog.html' });
   }
@@ -532,7 +534,7 @@
     const p = (D.blog || []).find((x) => x.slug === slug && x.active !== false);
     if (!p || ts(p.publishAt) > now()) return renderNotFound(main);
     const body = h('div', 'prose-ec'); body.innerHTML = sanitize(p.body || '');
-    main.replaceChildren(pageHeader(p.title, p.excerpt, [t('Blog'), p.title]), section('py-12', [h('article', 'mx-auto max-w-3xl', [h('div', 'mb-8 flex flex-wrap gap-3 text-sm text-zinc-400', [h('span', 'rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-cyan-300', p.category || 'Tech'), h('time', { datetime: String(p.publishAt).slice(0, 10) }, fmtDate(p.publishAt)), h('span', {}, t('Lecture : {min} min', { min: p.readMin || 4 }))]), body, h('div', 'mt-10 flex items-center gap-4 rounded-2xl border border-white/10 bg-panel p-5', [h('img', { src: linkTo('donko.png'), alt: '', width: '56', height: '56', class: 'h-14 w-14 rounded-xl object-contain' }), h('div', {}, [h('p', 'font-semibold text-white', 'Hassane DONKO'), h('p', 'text-sm text-zinc-400', t('Créateur d\'EMPIRE CODE HUB'))])])])]), ctaBand());
+    setKids(main, pageHeader(p.title, p.excerpt, [t('Blog'), p.title]), section('py-12', [h('article', 'mx-auto max-w-3xl', [h('div', 'mb-8 flex flex-wrap gap-3 text-sm text-zinc-400', [h('span', 'rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-cyan-300', p.category || 'Tech'), h('time', { datetime: String(p.publishAt).slice(0, 10) }, fmtDate(p.publishAt)), h('span', {}, t('Lecture : {min} min', { min: p.readMin || 4 }))]), body, h('div', 'mt-10 flex items-center gap-4 rounded-2xl border border-white/10 bg-panel p-5', [h('img', { src: linkTo('donko.png'), alt: '', width: '56', height: '56', class: 'h-14 w-14 rounded-xl object-contain' }), h('div', {}, [h('p', 'font-semibold text-white', 'Hassane DONKO'), h('p', 'text-sm text-zinc-400', t('Créateur d\'EMPIRE CODE HUB'))])])])]), ctaBand());
     setSEO({ title: p.seoTitle || p.title, description: p.seoDescription || p.excerpt, path: 'article.html?s=' + slug, type: 'article', jsonld: [orgLd(), { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, description: p.excerpt, datePublished: p.publishAt, author: { '@type': 'Person', name: 'Hassane DONKO' }, inLanguage: 'fr', keywords: (p.tags || []).join(', ') }] });
   }
   function renderProduct(main) {
@@ -540,7 +542,7 @@
     const p = catalog.find((x) => x.slug === slug);
     if (!p) return renderNotFound(main);
     const url = STORE + '/' + p.slug;
-    main.replaceChildren(pageHeader(p.title, null, [t('Produits'), p.title]), section('py-12', [h('div', 'grid gap-8 lg:grid-cols-5', [
+    setKids(main, pageHeader(p.title, null, [t('Produits'), p.title]), section('py-12', [h('div', 'grid gap-8 lg:grid-cols-5', [
       h('div', 'lg:col-span-3', [h('div', 'aspect-[16/10] overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-cyan-500/10 to-blue-600/10', [p.banner ? h('img', { src: p.banner, alt: p.title, class: 'h-full w-full object-cover', referrerpolicy: 'no-referrer', onerror: (e) => e.target.remove() }) : null]), h('h2', 'mt-8 text-xl font-bold text-white', t('Description')), h('div', 'mt-3 leading-relaxed text-zinc-300', p.description || t('Solution EMPIRE CODE livrée avec son code source, sa documentation (README) et un support technique.'))]),
       h('aside', 'lg:col-span-2', [h('div', 'sticky top-24 rounded-2xl border border-white/10 bg-panel p-6', [h('p', 'text-4xl font-extrabold text-cyan-300', priceOf(p)), p.oldPrice ? h('s', 'text-lg text-zinc-500', p.oldPrice) : null, h('a', { href: url, target: '_blank', rel: 'noopener', class: 'btn-primary mt-6 w-full justify-center' }, [ic('fa-solid fa-cart-shopping'), t('Acheter maintenant')]), h('p', 'mt-4 text-xs leading-relaxed text-zinc-500', t('Le paiement est traité par la boutique Chariow. Livraison automatique après paiement.')), h('a', { href: 'https://wa.me/' + WA + '?text=' + encodeURIComponent(t('Poser une question') + ' : ' + p.title), target: '_blank', rel: 'noopener', class: 'btn-ghost mt-4 w-full justify-center' }, [ic('fa-brands fa-whatsapp'), t('Poser une question')])])])])]));
     setSEO({ title: p.title, description: (p.description || p.title).slice(0, 155), path: 'produit.html?s=' + p.slug, type: 'product', image: p.banner || undefined, jsonld: [orgLd(), p.priceValue && p.cur ? { '@context': 'https://schema.org', '@type': 'Product', name: p.title, sku: p.slug, offers: { '@type': 'Offer', url, price: String(p.priceValue), priceCurrency: p.cur, availability: 'https://schema.org/InStock' } } : null] });
@@ -552,11 +554,11 @@
   };
   function renderLegal(main) {
     const kind = document.body.dataset.kind || 'mentions', [title, build] = LEGAL[kind] || LEGAL.mentions, L = D.legal || {};
-    main.replaceChildren(pageHeader(title, null, [title]), section('py-12', [h('div', 'mx-auto max-w-3xl space-y-8', build(L).map(([tt, p]) => h('section', {}, [h('h2', 'text-xl font-semibold text-white', tt), h('p', 'mt-3 leading-relaxed text-zinc-300', p)]))), h('p', 'mx-auto mt-10 max-w-3xl text-sm text-zinc-500', 'Dernière mise à jour : ' + fmtDate(D.updatedAt || now()))]));
+    setKids(main, pageHeader(title, null, [title]), section('py-12', [h('div', 'mx-auto max-w-3xl space-y-8', build(L).map(([tt, p]) => h('section', {}, [h('h2', 'text-xl font-semibold text-white', tt), h('p', 'mt-3 leading-relaxed text-zinc-300', p)]))), h('p', 'mx-auto mt-10 max-w-3xl text-sm text-zinc-500', 'Dernière mise à jour : ' + fmtDate(D.updatedAt || now()))]));
     setSEO({ title, description: title + ' — ' + S.brand, path: kind + '.html' });
   }
   function renderNotFound(main) {
-    main.replaceChildren(pageHeader(t('Page introuvable'), t('Cette page n’existe pas ou a été déplacée.'), [t('404')]), section('py-12', [h('div', 'flex flex-wrap gap-3', [h('a', { href: linkTo('index.html'), class: 'btn-primary' }, t('Retour à l’accueil')), h('a', { href: linkTo('services.html'), class: 'btn-ghost' }, t('Services'))])]));
+    setKids(main, pageHeader(t('Page introuvable'), t('Cette page n’existe pas ou a été déplacée.'), [t('404')]), section('py-12', [h('div', 'flex flex-wrap gap-3', [h('a', { href: linkTo('index.html'), class: 'btn-primary' }, t('Retour à l’accueil')), h('a', { href: linkTo('services.html'), class: 'btn-ghost' }, t('Services'))])]));
     setSEO({ title: t('Page introuvable'), description: t('Cette page n’existe pas ou a été déplacée.'), noindex: true });
   }
 
