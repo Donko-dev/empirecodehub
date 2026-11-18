@@ -43,9 +43,9 @@
   html[data-theme=light] .map-land{fill:#2563eb;opacity:.22}
 
   /* Bouton DONKO SYNTIX : pulsation + clignotement */
-  .ec-syntix{position:fixed;inset-inline-start:1rem;bottom:1.25rem;z-index:40;display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1rem;border-radius:999px;background:linear-gradient(90deg,#06b6d4,#2563eb);color:#000;font-weight:800;font-size:.85rem;letter-spacing:.02em;text-decoration:none;animation:syntixPulse 1.8s ease-out infinite,syntixBlink 1.2s steps(2,start) infinite}
+  .ec-syntix{position:fixed;inset-inline-start:1rem;bottom:1.25rem;z-index:40;display:inline-flex;align-items:center;gap:.6rem;padding:.4rem 1rem .4rem .4rem;border-radius:999px;background:#0b1220;color:#f5d27a;border:1px solid #d4a53a;font-weight:800;font-size:.85rem;letter-spacing:.04em;text-decoration:none;animation:syntixPulse 1.8s ease-out infinite,syntixBlink 1.2s steps(2,start) infinite}
   .ec-syntix:hover{filter:brightness(1.1)}
-  .ec-syntix-dot{width:.55rem;height:.55rem;border-radius:999px;background:#fff;box-shadow:0 0 8px #fff}
-  @keyframes syntixPulse{0%{box-shadow:0 0 0 0 rgba(34,211,238,.75)}70%{box-shadow:0 0 0 16px rgba(34,211,238,0)}100%{box-shadow:0 0 0 0 rgba(34,211,238,0)}}
+  .ec-syntix-logo{width:36px;height:36px;border-radius:999px;object-fit:cover;box-shadow:0 0 0 2px #d4a53a}
+  @keyframes syntixPulse{0%{box-shadow:0 0 0 0 rgba(212,165,58,.8)}70%{box-shadow:0 0 0 16px rgba(212,165,58,0)}100%{box-shadow:0 0 0 0 rgba(212,165,58,0)}}
   @keyframes syntixBlink{0%{opacity:1}50%{opacity:.5}100%{opacity:1}}
   @media (prefers-reduced-motion:reduce){.ec-syntix{animation:none}}

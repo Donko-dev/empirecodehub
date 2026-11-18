@@ -588,7 +588,7 @@
     applyDir();
     const main = h('main', { id: 'app', class: 'min-h-[60vh]' });
     const wa = h('a', { href: 'https://wa.me/' + WA, target: '_blank', rel: 'noopener', class: 'fixed bottom-5 end-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-black shadow-2xl', 'aria-label': t('Écrire sur WhatsApp') }, [ic('fa-brands fa-whatsapp text-2xl')]);
-    const syntix = h('a', { href: 'https://donko-dev.github.io/donkoquantsyntix/', target: '_blank', rel: 'noopener', class: 'ec-syntix', 'aria-label': 'DONKO SYNTIX — ' + t('Robots de trading') }, [h('span', { class: 'ec-syntix-dot' }), ic('fa-solid fa-robot'), h('span', {}, 'DONKO SYNTIX')]);
+    const syntix = h('a', { href: 'https://donko-dev.github.io/donkoquantsyntix/', target: '_blank', rel: 'noopener', class: 'ec-syntix', 'aria-label': 'DONKO SYNTIX — ' + t('Robots de trading') }, [h('img', { src: linkTo('syntix-logo.jpg'), alt: '', width: '36', height: '36', class: 'ec-syntix-logo', loading: 'eager' }), h('span', {}, 'DONKO SYNTIX')]);
     return { top: [header(), marquee(), adsBand()].filter(Boolean), main, bottom: [footer(), wa, syntix], wa };
   }
   function applyDir() { document.documentElement.setAttribute('lang', lang); document.documentElement.setAttribute('dir', meta().dir); }

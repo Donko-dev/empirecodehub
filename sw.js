@@ -1,7 +1,7 @@
 /* EMPIRE CODE HUB — Service Worker (fonctionnement hors connexion) */
-const VERSION = 'ec-v5';
+const VERSION = 'ec-v6';
 const CDN = 'ec-cdn-v5';
-const SHELL = ['./', './index.html', './services.html', './formations.html', './robots-trading.html', './paiement.html', './realisations.html', './couverture.html', './rendez-vous.html', './blog.html', './article.html', './produit.html', './mentions-legales.html', './conditions.html', './confidentialite.html', './404.html', './site.css', './app.js', './i18n.js', './i18n-services.js', './geo.js', './data.js', './donko.png', './manifest.json'];
+const SHELL = ['./', './index.html', './services.html', './formations.html', './robots-trading.html', './paiement.html', './realisations.html', './couverture.html', './rendez-vous.html', './blog.html', './article.html', './produit.html', './mentions-legales.html', './conditions.html', './confidentialite.html', './404.html', './site.css', './app.js', './i18n.js', './i18n-services.js', './geo.js', './data.js', './donko.png', './syntix-logo.jpg', './manifest.json'];
 const CDN_URLS = ['https://cdn.tailwindcss.com/', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css'];
 const CDN_HOSTS = ['cdn.tailwindcss.com', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 
